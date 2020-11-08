@@ -1,0 +1,6 @@
+15:40:03 **** Incremental Build of configuration Debug for project HITSIC_MK66F18_MCUX ****
+make -r -j all 
+make: Nothing to be done for 'all'.
+
+15:40:04 Build Finished. 0 errors, 0 warnings. (took 725ms)
+
