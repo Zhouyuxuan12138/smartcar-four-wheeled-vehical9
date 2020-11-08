@@ -81,7 +81,7 @@ FATFS fatfs;                                   //逻辑驱动器的工作区
 
 /** SCLIB_TEST */
 #include "sc_test.hpp"
-
+#include "team_menu_test.hpp"
 
 void MENU_DataSetUp(void);
 
@@ -154,6 +154,7 @@ void main(void)
 void MENU_DataSetUp(void)
 {
     MENU_ListInsert(menu_menuRoot, MENU_ItemConstruct(nullType, NULL, "EXAMPLE", 0, 0));
+    our_menu_test(menu_menuRoot);
     //TODO: 在这里添加子菜单和菜单项
 }
 
