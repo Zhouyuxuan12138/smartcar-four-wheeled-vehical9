@@ -5,6 +5,7 @@
 #include "app_menu.hpp"
 #include "team_ctr.hpp"
 #include "image.h"//图像处理代码库
+#include "team_ctr.hpp"
 
 int speed1[3]={1,2,3};
 float speed2[3]={0.1f,0.2f,0.3f};
@@ -49,8 +50,8 @@ void team_camtoled(void*)
                               }
                           }
 
-                          DISP_SSD1306_BufferUpload((uint8_t*) dispBuffer);
-                          DISP_SSD1306_Printf_F6x8(5,10,"%d",mid_line[100])
+                          //DISP_SSD1306_BufferUpload((uint8_t*) dispBuffer);
+                          DISP_SSD1306_Printf_F6x8(5,10,"%d",mid_line[100]);
                           DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, fullBuffer);
                           DMADVP_TransferStart(DMADVP0,&dmadvpHandle);
                           get_mid_line();
