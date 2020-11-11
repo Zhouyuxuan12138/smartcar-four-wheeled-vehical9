@@ -122,13 +122,14 @@ void main(void)
     /** 初始化PIT中断管理器 */
     pitMgr_t::init();
     pitMgr_t::insert(5U,0,Motor_ctr,pitMgr_t::enable);
+    pitMgr_t::insert(20U,2,PWM_clr_servo,pitMgr_t::enable);
     /** 初始化I/O中断管理器 */
     extInt_t::init();
     /** 初始化OLED屏幕 */
     DISP_SSD1306_Init();
     extern const uint8_t DISP_image_100thAnniversary[8][128];
-    DISP_SSD1306_BufferUpload((uint8_t*) DISP_image_100thAnniversary);
-    SDK_DelayAtLeastUs(1000*1000,CLOCK_GetFreq(kCLOCK_CoreSysClk));
+    /*DISP_SSD1306_BufferUpload((uint8_t*) DISP_image_100thAnniversary);
+    SDK_DelayAtLeastUs(1000*1000,CLOCK_GetFreq(kCLOCK_CoreSysClk));*
     /** 初始化菜单 */
     MENU_Init();
     MENU_Data_NvmReadRegionConfig();

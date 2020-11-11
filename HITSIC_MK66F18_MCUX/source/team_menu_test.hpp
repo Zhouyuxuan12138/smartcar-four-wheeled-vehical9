@@ -4,9 +4,11 @@
 #include "hitsic_common.h"
 #include "app_menu.hpp"
 #include "team_ctr.hpp"
+#include "image.h"//图像处理代码库
 
 int speed1[3]={1,2,3};
 float speed2[3]={0.1f,0.2f,0.3f};
+pid pid1[3];
 void team_camtoled(void*)
 {
     cam_zf9v034_configPacket_t cameraCfg;
@@ -24,6 +26,8 @@ void team_camtoled(void*)
            DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer0);
            //DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer1);
            DMADVP_TransferStart(DMADVP0, &dmadvpHandle);
+           mid_line[100] = 94;
+           PID_init(pid1,mid_line);//pid 初始化
            while(true)
            {
                while (kStatus_Success != DMADVP_TransferGetFullBuffer(DMADVP0, &dmadvpHandle, &fullBuffer));
@@ -46,11 +50,12 @@ void team_camtoled(void*)
                           }
 
                           DISP_SSD1306_BufferUpload((uint8_t*) dispBuffer);
-
-
-
+                          DISP_SSD1306_Printf_F6x8(5,10,"%d",mid_line[100])
                           DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, fullBuffer);
                           DMADVP_TransferStart(DMADVP0,&dmadvpHandle);
+                          get_mid_line();
+                          pd_ctr(pid1);
+                          pd_generate_pulse(pid1);
                           if(GPIO_PinRead(GPIOE, 10) == 0) break;
            }
 }
