@@ -80,8 +80,9 @@ FATFS fatfs;                                   //逻辑驱动器的工作区
 #include "sys_fatfs_diskioTest.hpp"
 
 /** SCLIB_TEST */
-#include "sc_test.hpp"
+//#include "sc_test.hpp"
 #include "team_menu_test.hpp"
+#include "team_ctr.hpp"
 
 void MENU_DataSetUp(void);
 
@@ -120,6 +121,7 @@ void main(void)
     //easyflash_init();
     /** 初始化PIT中断管理器 */
     pitMgr_t::init();
+    pitMgr_t::insert(5U,0,Motor_ctr,pitMgr_t::enable);
     /** 初始化I/O中断管理器 */
     extInt_t::init();
     /** 初始化OLED屏幕 */
