@@ -2,8 +2,13 @@
 #define TEAM_CTR_HPP_
 #include "hitsic_common.h"
 #include "sc_ftm.h"
+#include "image.h"
 extern int Motorspeed[3] = {20,0,50};
-extern float pulse=7.6;
+float error_n=0;
+float error_n_1=0;
+const float servo_mid=7.5;
+float servo_pwm=7.5;
+
 typedef struct _pid{
     float setmid;            //定义设定值
     float actualmid;        //定义实际值
@@ -12,7 +17,6 @@ typedef struct _pid{
     float err_last;            //定义最上前的偏差值
     float Kp,Kd;            //定义比例、积分、微分系数
 }pid;
-extern pid pid1[3];
 
 void Motor_ctr(void)//电机控制，暂时匀速
 {
@@ -21,38 +25,24 @@ void Motor_ctr(void)//电机控制，暂时匀速
     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_2, 20000U, 0U);
     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_3, 20000U, Motorspeed[0]);//左轮正转kFTM_Chnl_3> kFTM_Chnl_2
 }
-void PID_init(pid* p,uint8_t *m){
-    p->setmid=94.0;
-    p->actualmid = m[100];
-    p->err=0.0;
-    p->err_last=0.0;
-    p->err_next=0.0;
-    p->Kp=0.2;
-    p->Kd=0.2;
-}
-
-void pd_ctr(pid *p)
+void servo_pid()
 {
-        p->setmid = 96;
-        p->err=p->setmid-p->actualmid;
-        float increment=p->Kp*(p->err-p->err_next)+p->Kd*(p->err-2*p->err_next+p->err_last);
-        p->actualmid+=increment;
-        p->err_last=p->err_next;
-        p->err_next=p->err;
-}
+    float pwm_error=0;
+    error_n=get_error();
+    pwm_error=0.015*error_n+0.01*(error_n-error_n_1);
+    servo_pwm=servo_mid+pwm_error;
+    if(servo_pwm<6.8)
+        servo_pwm=6.8;
+    else if(servo_pwm>8.2)
+        servo_pwm=8.2;
 
-void pd_generate_pulse(pid *p)
+    error_n_1=error_n;
+};
+
+void servo()
 {
-    pulse = (0.05*(p->err)) + 7.6f;
-    if((pulse<=6.6) || (pulse>=8.6)) pulse = 7.6;
+    SCFTM_PWM_ChangeHiRes(FTM3,kFTM_Chnl_7,50,servo_pwm);
 }
-
-void PWM_clr_servo(void*)
-{
-    SCFTM_PWM_ChangeHiRes(FTM3, kFTM_Chnl_7, 50U, pulse);
-}
-
-
 
 
 
