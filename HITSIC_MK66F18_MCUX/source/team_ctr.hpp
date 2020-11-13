@@ -3,11 +3,11 @@
 #include "hitsic_common.h"
 #include "sc_ftm.h"
 #include "image.h"
-extern int Motorspeed[3] = {20,0,50};
+extern int Motorspeed[3] = {22,0,50};
 float error_n=0;
 float error_n_1=0;
-const float servo_mid=7.5;
-float servo_pwm=7.5;
+const float servo_mid=7.75;
+float servo_pwm=7.75;
 
 typedef struct _pid{
     float setmid;            //定义设定值
@@ -29,7 +29,7 @@ void servo_pid()
 {
     float pwm_error=0;
     error_n=get_error();
-    pwm_error=0.015*error_n+0.01*(error_n-error_n_1);
+    pwm_error=0.02*error_n+0.015*(error_n-error_n_1);
     servo_pwm=servo_mid+pwm_error;
     if(servo_pwm<6.8)
         servo_pwm=6.8;

@@ -175,7 +175,7 @@ void main(void)
                  image_main();
                  servo_pid();
                          dispBuffer->Clear();
-                         const uint8_t imageTH = 100;
+                         const uint8_t imageTH = 120;
                          for (int i = 0; i < cameraCfg.imageRow; i += 2)
                          {
                              int16_t imageRow = i >> 1;//除以2 为了加速;
