@@ -35,7 +35,7 @@ uint8_t mid_line[CAMERA_H];
 int all_connect_num = 0;//所有白条子数
 uint8_t top_road;//赛道最高处所在行数
 uint8_t threshold = 160;//阈值
-
+uint8_t *fullBuffer=NULL;
 ////////////////////////////////////////////
 //功能：二值化
 //输入：灰度图片

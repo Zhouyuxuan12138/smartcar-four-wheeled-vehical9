@@ -122,7 +122,7 @@ void main(void)
     /** 初始化PIT中断管理器 */
     pitMgr_t::init();
     pitMgr_t::insert(5U,0,Motor_ctr,pitMgr_t::enable);
-    pitMgr_t::insert(20U,2,PWM_clr_servo,pitMgr_t::enable);
+    pitMgr_t::insert(20U,6,PWM_clr_servo,pitMgr_t::enable);
     /** 初始化I/O中断管理器 */
     extInt_t::init();
     /** 初始化OLED屏幕 */
@@ -130,27 +130,54 @@ void main(void)
     extern const uint8_t DISP_image_100thAnniversary[8][128];
     /*DISP_SSD1306_BufferUpload((uint8_t*) DISP_image_100thAnniversary);
     SDK_DelayAtLeastUs(1000*1000,CLOCK_GetFreq(kCLOCK_CoreSysClk));*
-    /** 初始化菜单 */
+    /* 初始化菜单 */
     MENU_Init();
     MENU_Data_NvmReadRegionConfig();
     MENU_Data_NvmRead(menu_currRegionNum);
     /** 菜单挂起 */
     MENU_Suspend();
+
     /** 初始化摄像头 */
     //TODO: 在这里初始化摄像头
+    cam_zf9v034_configPacket_t cameraCfg;
+    CAM_ZF9V034_GetDefaultConfig(&cameraCfg);                                   //设置摄像头配置
+    CAM_ZF9V034_CfgWrite(&cameraCfg);                                   //写入配置
+    dmadvp_config_t dmadvpCfg;
+    CAM_ZF9V034_GetReceiverConfig(&dmadvpCfg, &cameraCfg);    //生成对应接收器的配置数据，使用此数据初始化接受器并接收图像数据。
+    DMADVP_Init(DMADVP0, &dmadvpCfg);
+    dmadvp_handle_t dmadvpHandle;
+    DMADVP_TransferCreateHandle(&dmadvpHandle, DMADVP0, CAM_ZF9V034_DmaCallback);
+    uint8_t *imageBuffer0 = new uint8_t[DMADVP0->imgSize];
+    uint8_t *fullBuffer = NULL;
+    DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer0);
+    DMADVP_TransferStart(DMADVP0, &dmadvpHandle);
 
     /** 初始化IMU */
     //TODO: 在这里初始化IMU（MPU6050）
     /** 菜单就绪 */
-     MENU_Resume();    //暂时关闭，为了调试摄像头
+     MENU_Resume();
     /** 控制环初始化 */
     //TODO: 在这里初始化控制环
     /** 初始化结束，开启总中断 */
     HAL_ExitCritical();
 
-    float f = arm_sin_f32(0.6f);
+    //float f = arm_sin_f32(0.6f);
+    mid_line[100]=96;
+    PID_init(pid1,mid_line);
+    while(true)
+    {
 
-    while(true);
+            DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, fullBuffer);
+            DMADVP_TransferStart(DMADVP0,&dmadvpHandle);
+            THRE();
+            head_clear();
+            image_main();
+            pd_ctr(pid1);
+            pd_generate_pulse(pid1);
+
+    }
+
+
 }
 
 void MENU_DataSetUp(void)
@@ -163,6 +190,12 @@ void MENU_DataSetUp(void)
 void CAM_ZF9V034_DmaCallback(edma_handle_t *handle, void *userData, bool transferDone, uint32_t tcds)
 {
     //TODO: 补完本回调函数
+    dmadvp_handle_t *dmadvpHandle = (dmadvp_handle_t*)userData;
 
+    DMADVP_EdmaCallbackService(dmadvpHandle, transferDone);
+    if(kStatus_Success != DMADVP_TransferStart(dmadvpHandle->base, dmadvpHandle))
+    {
+        DMADVP_TransferStop(dmadvpHandle->base, dmadvpHandle);
+    }
     //TODO: 添加图像处理（转向控制也可以写在这里）
 }

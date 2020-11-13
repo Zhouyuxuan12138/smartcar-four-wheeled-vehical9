@@ -6,11 +6,12 @@
 #include "team_ctr.hpp"
 #include "image.h"//图像处理代码库
 #include "team_ctr.hpp"
+#include "team_image.hpp"
 
 int speed1[3]={1,2,3};
 float speed2[3]={0.1f,0.2f,0.3f};
 pid pid1[3];
-void team_camtoled(void*)
+void team_camtoled(void)
 {
     cam_zf9v034_configPacket_t cameraCfg;
            CAM_ZF9V034_GetDefaultConfig(&cameraCfg);                                   //设置摄像头配置
@@ -27,8 +28,6 @@ void team_camtoled(void*)
            DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer0);
            //DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer1);
            DMADVP_TransferStart(DMADVP0, &dmadvpHandle);
-           mid_line[100] = 94;
-           PID_init(pid1,mid_line);//pid 初始化
            while(true)
            {
                while (kStatus_Success != DMADVP_TransferGetFullBuffer(DMADVP0, &dmadvpHandle, &fullBuffer));
@@ -50,13 +49,9 @@ void team_camtoled(void*)
                               }
                           }
 
-                          //DISP_SSD1306_BufferUpload((uint8_t*) dispBuffer);
-                          DISP_SSD1306_Printf_F6x8(5,10,"%d",mid_line[100]);
+                          DISP_SSD1306_BufferUpload((uint8_t*) dispBuffer);
                           DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, fullBuffer);
                           DMADVP_TransferStart(DMADVP0,&dmadvpHandle);
-                          get_mid_line();
-                          pd_ctr(pid1);
-                          pd_generate_pulse(pid1);
                           if(GPIO_PinRead(GPIOE, 10) == 0) break;
            }
 }
@@ -84,6 +79,7 @@ void our_menu_test(menu_list_t *menu)
                 MENU_ItemConstruct(varfType, &speed2[2], "float2", 1,  menuItem_data_region));
         MENU_ListInsert(TestList, MENU_ItemConstruct(nullType, NULL, "function", 0, 0));
         MENU_ListInsert(TestList, MENU_ItemConstruct(procType,team_camtoled, "cam_toled", 0, menuItem_proc_uiDisplay));
+        MENU_ListInsert(TestList, MENU_ItemConstruct(procType,team_getmidline, "RUNCAR", 1, menuItem_proc_uiDisplay));
     }
 }
-#endif // ! HITSIC_USE_APP_MENU
+#endif
