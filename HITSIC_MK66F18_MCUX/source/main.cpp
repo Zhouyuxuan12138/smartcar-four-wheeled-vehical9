@@ -90,9 +90,10 @@ FATFS fatfs;                                   //逻辑驱动器的工作区
 cam_zf9v034_configPacket_t cameraCfg;
 dmadvp_config_t dmadvpCfg;
 dmadvp_handle_t dmadvpHandle;
+disp_ssd1306_frameBuffer_t *dispBuffer;
 inv::i2cInterface_t imu_i2c(nullptr, IMU_INV_I2cRxBlocking, IMU_INV_I2cTxBlocking);
 inv::mpu6050_t imu_6050(imu_i2c);
-
+void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffer);
 void main(void)
 {
     /** 初始化阶段，关闭总中断 */
@@ -146,7 +147,7 @@ void main(void)
         dmadvp_handle_t dmadvpHandle;
         DMADVP_TransferCreateHandle(&dmadvpHandle, DMADVP0, CAM_ZF9V034_UnitTestDmaCallback);
         uint8_t *imageBuffer0 = new uint8_t[DMADVP0->imgSize];
-        disp_ssd1306_frameBuffer_t *dispBuffer = new disp_ssd1306_frameBuffer_t;
+        dispBuffer = new disp_ssd1306_frameBuffer_t;
         uint8_t *imageBuffer1 = new uint8_t[DMADVP0->imgSize];
         //uint8_t *fullBuffer = NULL;
         DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer0);
@@ -168,30 +169,7 @@ void main(void)
     float f = arm_sin_f32(0.6f);
     while (true)
     {
-
-        while (kStatus_Success != DMADVP_TransferGetFullBuffer(DMADVP0, &dmadvpHandle, &fullBuffer));
-                 THRE();
-                 //head_clear();
-                 image_main();
-                 servo_pid();
-                         dispBuffer->Clear();
-                         const uint8_t imageTH = 120;
-                         for (int i = 0; i < cameraCfg.imageRow; i += 2)
-                         {
-                             int16_t imageRow = i >> 1;//除以2 为了加速;
-                             int16_t dispRow = (imageRow / 8) + 1, dispShift = (imageRow % 8);
-                             for (int j = 0; j < cameraCfg.imageCol; j += 2)
-                             {
-                                 int16_t dispCol = j >> 1;
-                                 if (IMG[i][j]>imageTH)//fullBuffer[i * cameraCfg.imageCol + j] >
-                                 {
-                                     dispBuffer->SetPixelColor(dispCol, imageRow, 1);
-                                 }
-                             }
-                         }
-
-                         DISP_SSD1306_BufferUpload((uint8_t*) dispBuffer);
-                         DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, fullBuffer);
+        run_car(&dmadvpHandle,dispBuffer);
         //TODO: 在这里添加车模保护代码
     }
 }
@@ -210,5 +188,31 @@ void CAM_ZF9V034_DmaCallback(edma_handle_t *handle, void *userData, bool transfe
     //TODO: 补完本回调函数
 
     //TODO: 添加图像处理（转向控制也可以写在这里）
+}
+void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffer)
+{
+    while (kStatus_Success != DMADVP_TransferGetFullBuffer(DMADVP0, dmadvpHandle,&fullBuffer));
+                     THRE();
+                     //head_clear();
+                     image_main();
+                     servo_pid();
+                             dispBuffer->Clear();
+                             const uint8_t imageTH = 120;
+                             for (int i = 0; i < cameraCfg.imageRow; i += 2)
+                             {
+                                 int16_t imageRow = i >> 1;//除以2 为了加速;
+                                 int16_t dispRow = (imageRow / 8) + 1, dispShift = (imageRow % 8);
+                                 for (int j = 0; j < cameraCfg.imageCol; j += 2)
+                                 {
+                                     int16_t dispCol = j >> 1;
+                                     if (IMG[i][j]>imageTH)//fullBuffer[i * cameraCfg.imageCol + j] >
+                                     {
+                                         dispBuffer->SetPixelColor(dispCol, imageRow, 1);
+                                     }
+                                 }
+                             }
+
+                             DISP_SSD1306_BufferUpload((uint8_t*) dispBuffer);
+                             DMADVP_TransferSubmitEmptyBuffer(DMADVP0, dmadvpHandle, fullBuffer);
 }
 
