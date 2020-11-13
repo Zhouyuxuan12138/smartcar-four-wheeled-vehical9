@@ -2908,6 +2908,94 @@
 						<entry kind="macro" name="__NEWLIB__" value="1"/>
 						<entry kind="macro" name="__USE_CMSIS" value="1"/>
 					</resource>
+					<resource project-relative-path="source/image.c">
+						<entry kind="includePath" name="/${ProjName}/board">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/component/lists">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/component/uart">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/component/osa">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/component/serial_manager">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/CMSIS">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/device">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/drivers">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/fatfs/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/fatfs/source/fsl_ram_disk">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/fatfs/source/fsl_sd_disk">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/sdmmc/host">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/sdmmc/inc">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/sdmmc/osa">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/source">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/utilities">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/HITSIC_Module/utilities">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/HITSIC_Module/utilities_test">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/HITSIC_Module/utilities/extlib/CmBacktrace-1.4.0/cm_backtrace">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/HITSIC_Module/utilities/extlib/EasyFlash-4.0.0/easyflash/inc">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/HITSIC_Module/utilities/extlib/EasyFlash-4.0.0/easyflash/plugins/types/struct2json/inc">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/HITSIC_Module/d_mk66f18">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/HITSIC_Module/d_mk66f18/extlib_port/CmBacktrace-1.4.0/cm_backtrace">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="includePath" name="/${ProjName}/HITSIC_Module/d_mk66f18/extlib_port/EasyFlash-4.0.0/easyflash/port">
+							<flag value="VALUE_WORKSPACE_PATH"/>
+						</entry>
+						<entry kind="macro" name="CPU_MK66FX1M0VLQ18" value="1"/>
+						<entry kind="macro" name="CPU_MK66FX1M0VLQ18cm7" value="1"/>
+						<entry kind="macro" name="DEBUG" value="1"/>
+						<entry kind="macro" name="DEBUG_CONSOLE_RX_ENABLE" value="1"/>
+						<entry kind="macro" name="FSL_RTOS_BM" value="1"/>
+						<entry kind="macro" name="I2C_RETRY_TIMES" value="32768"/>
+						<entry kind="macro" name="SDK_DEBUGCONSOLE" value="1"/>
+						<entry kind="macro" name="SDK_OS_BAREMETAL" value="1"/>
+						<entry kind="macro" name="SERIAL_PORT_TYPE_SWO" value="0"/>
+						<entry kind="macro" name="SERIAL_PORT_TYPE_UART" value="1"/>
+						<entry kind="macro" name="UART_RETRY_TIMES" value="32768"/>
+						<entry kind="macro" name="__MCUXPRESSO" value="1"/>
+						<entry kind="macro" name="__NEWLIB__" value="1"/>
+						<entry kind="macro" name="__USE_CMSIS" value="1"/>
+					</resource>
 					<resource project-relative-path="drivers/fsl_flexbus.c">
 						<entry kind="includePath" name="/${ProjName}/board">
 							<flag value="VALUE_WORKSPACE_PATH"/>
