@@ -37,7 +37,6 @@ void team_camtoled(void*)
                           for (int i = 0; i < cameraCfg.imageRow; i += 2)
                           {
                               int16_t imageRow = i >> 1;//除以2 为了加速;
-                              int16_t dispRow = (imageRow / 8) + 1, dispShift = (imageRow % 8);
                               for (int j = 0; j < cameraCfg.imageCol; j += 2)
                               {
                                   int16_t dispCol = j >> 1;

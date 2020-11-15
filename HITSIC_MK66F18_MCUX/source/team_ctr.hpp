@@ -25,8 +25,15 @@ void Motor_ctr(void)//电机控制，暂时匀速
     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_2, 20000U, 0U);
     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_3, 20000U, Motorspeed[0]);//左轮正转kFTM_Chnl_3> kFTM_Chnl_2
 }
+void servo_init(float *pwm)
+{
+
+    *pwm = servo_mid;
+
+}
 void servo_pid()
 {
+    servo_init(&servo_pwm);
     float pwm_error=0;
     error_n=get_error();
     pwm_error=0.02*error_n+0.015*(error_n-error_n_1);
@@ -43,8 +50,6 @@ void servo()
 {
     SCFTM_PWM_ChangeHiRes(FTM3,kFTM_Chnl_7,50,servo_pwm);
 }
-
-
 
 
 

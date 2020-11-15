@@ -93,7 +93,11 @@ dmadvp_handle_t dmadvpHandle;
 disp_ssd1306_frameBuffer_t *dispBuffer;
 inv::i2cInterface_t imu_i2c(nullptr, IMU_INV_I2cRxBlocking, IMU_INV_I2cTxBlocking);
 inv::mpu6050_t imu_6050(imu_i2c);
+uint8_t mode_flag = 0;//状态切换标志位变量
+uint8_t *p_mflag = NULL;//状态切换指针
+uint8_t prem_flag = 0;//状态切换标志位变量2，previous标志位
 void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffer);
+void mode_switch(void);
 void main(void)
 {
     /** 初始化阶段，关闭总中断 */
@@ -120,39 +124,25 @@ void main(void)
     /** 初始化EasyFlash */
     //easyflash_init();
     /** 初始化PIT中断管理器 */
+    p_mflag = &mode_flag;
     pitMgr_t::init();
-    pitMgr_t::insert(20U, 3U, Motor_ctr, pitMgr_t::enable);
+    pitMgr_t::insert(5U, 1U, Motor_ctr, pitMgr_t::enable);//电机中断
     pitMgr_t::insert(20U, 3U, servo, pitMgr_t::enable);//舵机中断
+    pitMgr_t::insert(1000U, 7U, mode_switch, pitMgr_t::enable);//状态切换
     /** 初始化I/O中断管理器 */
     extInt_t::init();
     /** 初始化OLED屏幕 */
     DISP_SSD1306_Init();
     extern const uint8_t DISP_image_100thAnniversary[8][128];
-    DISP_SSD1306_BufferUpload((uint8_t*) DISP_image_100thAnniversary);
-
-
+    //DISP_SSD1306_BufferUpload((uint8_t*) DISP_image_100thAnniversary);
    /** 初始化菜单 */
-  //MENU_Init();
-  //MENU_Data_NvmReadRegionConfig();
-  //MENU_Data_NvmRead(menu_currRegionNum);
+        MENU_Init();
+        MENU_Data_NvmReadRegionConfig();
+        MENU_Data_NvmRead(menu_currRegionNum);
    /** 菜单挂起 */
-   //MENU_Suspend();
+        MENU_Suspend();
     /** 初始化摄像头 */
-    cam_zf9v034_configPacket_t cameraCfg;
-        CAM_ZF9V034_GetDefaultConfig(&cameraCfg);                                   //设置摄像头配置
-        CAM_ZF9V034_CfgWrite(&cameraCfg);                                   //写入配置
-        dmadvp_config_t dmadvpCfg;
-        CAM_ZF9V034_GetReceiverConfig(&dmadvpCfg, &cameraCfg);    //生成对应接收器的配置数据，使用此数据初始化接受器并接收图像数据。
-        DMADVP_Init(DMADVP0, &dmadvpCfg);
-        dmadvp_handle_t dmadvpHandle;
-        DMADVP_TransferCreateHandle(&dmadvpHandle, DMADVP0, CAM_ZF9V034_UnitTestDmaCallback);
-        uint8_t *imageBuffer0 = new uint8_t[DMADVP0->imgSize];
-        dispBuffer = new disp_ssd1306_frameBuffer_t;
-        uint8_t *imageBuffer1 = new uint8_t[DMADVP0->imgSize];
-        //uint8_t *fullBuffer = NULL;
-        DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer0);
-        DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer1);
-    DMADVP_TransferStart(DMADVP0, &dmadvpHandle);
+        /*摄像头在主函数中初始化*/
     //TODO: 在这里初始化摄像头
     /** 初始化IMU */
     //TODO: 在这里初始化IMU（MPU6050）
@@ -166,10 +156,47 @@ void main(void)
     HAL_ExitCritical();
     //SCFTM_PWM_ChangeHiRes(FTM3,kFTM_Chnl_7,50,7.45);
 
-    float f = arm_sin_f32(0.6f);
+    //float f = arm_sin_f32(0.6f);//暂时不知道功能
     while (true)
     {
-        run_car(&dmadvpHandle,dispBuffer);
+        switch(mode_flag)
+        {
+        case 0x00: {MENU_Suspend(); DISP_SSD1306_BufferUpload((uint8_t*) DISP_image_100thAnniversary);}break;
+        case 0x01:
+        {
+            MENU_Suspend();
+            CAM_ZF9V034_GetDefaultConfig(&cameraCfg);                                   //设置摄像头配置
+               CAM_ZF9V034_CfgWrite(&cameraCfg);                                   //写入配置
+               CAM_ZF9V034_GetReceiverConfig(&dmadvpCfg, &cameraCfg);    //生成对应接收器的配置数据，使用此数据初始化接受器并接收图像数据。
+               DMADVP_Init(DMADVP0, &dmadvpCfg);
+               DMADVP_TransferCreateHandle(&dmadvpHandle, DMADVP0, CAM_ZF9V034_UnitTestDmaCallback);
+               uint8_t *imageBuffer0 = new uint8_t[DMADVP0->imgSize];
+               dispBuffer = new disp_ssd1306_frameBuffer_t;
+               uint8_t *imageBuffer1 = new uint8_t[DMADVP0->imgSize];
+               DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer0);
+               DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer1);
+           DMADVP_TransferStart(DMADVP0, &dmadvpHandle);
+        while(true)
+            {
+                prem_flag = mode_flag;
+                run_car(&dmadvpHandle,dispBuffer);
+                if(prem_flag != mode_flag) break;
+            }
+        }
+        break;
+        case 0x02:
+                {MENU_Resume();
+                while(true)
+                 {
+                    prem_flag = mode_flag;
+                    SDK_DelayAtLeastUs(2000000,180*1000*1000);
+                    if(prem_flag != mode_flag) break;
+                  }
+                }
+                    break;
+        default: break;
+        }
+
         //TODO: 在这里添加车模保护代码
     }
 }
@@ -201,7 +228,6 @@ void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffe
                              for (int i = 0; i < cameraCfg.imageRow; i += 2)
                              {
                                  int16_t imageRow = i >> 1;//除以2 为了加速;
-                                 int16_t dispRow = (imageRow / 8) + 1, dispShift = (imageRow % 8);
                                  for (int j = 0; j < cameraCfg.imageCol; j += 2)
                                  {
                                      int16_t dispCol = j >> 1;
@@ -215,4 +241,10 @@ void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffe
                              DISP_SSD1306_BufferUpload((uint8_t*) dispBuffer);
                              DMADVP_TransferSubmitEmptyBuffer(DMADVP0, dmadvpHandle, fullBuffer);
 }
-
+void mode_switch(void)
+{
+    (GPIO_PinRead(GPIOA,9) == 0)? ((*p_mflag) |= 1U):((*p_mflag) &= 0xfe);
+    (GPIO_PinRead(GPIOA,11) == 0)? ((*p_mflag) |= 1U<<1):((*p_mflag) &= 0xfd);
+    (GPIO_PinRead(GPIOA,13) == 0)? ((*p_mflag) |= 1U<<2):((*p_mflag) &= 0xfb);
+    (GPIO_PinRead(GPIOA,15) == 0)? ((*p_mflag) |= 1U<<3):((*p_mflag) &= 0xf7);
+}
