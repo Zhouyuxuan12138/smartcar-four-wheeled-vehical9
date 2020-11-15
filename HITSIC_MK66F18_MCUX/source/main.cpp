@@ -84,8 +84,6 @@ FATFS fatfs;                                   //逻辑驱动器的工作区
 
 #include "image.h"
 #include"team_menu_test.hpp"
-#include"team_ctr.hpp"
-
 
 cam_zf9v034_configPacket_t cameraCfg;
 dmadvp_config_t dmadvpCfg;
@@ -161,7 +159,18 @@ void main(void)
     {
         switch(mode_flag)
         {
-        case 0x00: {MENU_Suspend(); DISP_SSD1306_BufferUpload((uint8_t*) DISP_image_100thAnniversary);}break;
+        case 0x00: {
+            {
+                MENU_Resume();
+            while(true)
+             {
+                prem_flag = mode_flag;
+                SDK_DelayAtLeastUs(2000000,180*1000*1000);
+                if(prem_flag != mode_flag) break;
+              }
+            }
+                break;
+        }break;
         case 0x01:
         {
             MENU_Suspend();
@@ -172,9 +181,9 @@ void main(void)
                DMADVP_TransferCreateHandle(&dmadvpHandle, DMADVP0, CAM_ZF9V034_UnitTestDmaCallback);
                uint8_t *imageBuffer0 = new uint8_t[DMADVP0->imgSize];
                dispBuffer = new disp_ssd1306_frameBuffer_t;
-               uint8_t *imageBuffer1 = new uint8_t[DMADVP0->imgSize];
+               //uint8_t *imageBuffer1 = new uint8_t[DMADVP0->imgSize];
                DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer0);
-               DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer1);
+               //DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer1);
            DMADVP_TransferStart(DMADVP0, &dmadvpHandle);
         while(true)
             {
@@ -182,10 +191,14 @@ void main(void)
                 run_car(&dmadvpHandle,dispBuffer);
                 if(prem_flag != mode_flag) break;
             }
+        delete imageBuffer0;
+        delete &dispBuffer;
+
         }
         break;
         case 0x02:
-                {MENU_Resume();
+                {
+                    MENU_Resume();
                 while(true)
                  {
                     prem_flag = mode_flag;
@@ -196,7 +209,6 @@ void main(void)
                     break;
         default: break;
         }
-
         //TODO: 在这里添加车模保护代码
     }
 }
@@ -240,11 +252,12 @@ void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffe
 
                              DISP_SSD1306_BufferUpload((uint8_t*) dispBuffer);
                              DMADVP_TransferSubmitEmptyBuffer(DMADVP0, dmadvpHandle, fullBuffer);
+                             DMADVP_TransferStart(DMADVP0, dmadvpHandle);
 }
 void mode_switch(void)
 {
-    (GPIO_PinRead(GPIOA,9) == 0)? ((*p_mflag) |= 1U):((*p_mflag) &= 0xfe);
-    (GPIO_PinRead(GPIOA,11) == 0)? ((*p_mflag) |= 1U<<1):((*p_mflag) &= 0xfd);
-    (GPIO_PinRead(GPIOA,13) == 0)? ((*p_mflag) |= 1U<<2):((*p_mflag) &= 0xfb);
-    (GPIO_PinRead(GPIOA,15) == 0)? ((*p_mflag) |= 1U<<3):((*p_mflag) &= 0xf7);
+    (GPIO_PinRead(GPIOA,9) == 0)? ((*p_mflag) |= 0x01):((*p_mflag) &= 0xfe);
+    (GPIO_PinRead(GPIOA,11) == 0)? ((*p_mflag) |= 0x02):((*p_mflag) &= 0xfd);
+    (GPIO_PinRead(GPIOA,13) == 0)? ((*p_mflag) |= 0x04):((*p_mflag) &= 0xfb);
+    (GPIO_PinRead(GPIOA,15) == 0)? ((*p_mflag) |= 0x08):((*p_mflag) &= 0xf7);
 }
