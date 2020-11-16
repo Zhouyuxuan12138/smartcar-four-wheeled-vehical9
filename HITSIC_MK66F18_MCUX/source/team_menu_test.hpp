@@ -65,6 +65,9 @@ void our_menu_test(menu_list_t *menu)
                 MENU_ItemConstruct(varfType, &(c_data[0].Kp), "pid[0]Kp",11, menuItem_data_global));
         MENU_ListInsert(TestList,
                 MENU_ItemConstruct(varfType, &(c_data[0].Kd), "pid[0]Kd", 12, menuItem_data_global));
+        MENU_ListInsert(TestList, MENU_ItemConstruct(nullType, NULL, "camerapar", 0, 0));
+        MENU_ListInsert(TestList,
+                       MENU_ItemConstruct(variType, &(c_data[0].foresight), "foresight",13, menuItem_data_global));
         MENU_ListInsert(TestList, MENU_ItemConstruct(nullType, NULL, "function", 0, 0));
         MENU_ListInsert(TestList,
                 MENU_ItemConstruct(procType,team_camtoled, "cam_toled", 0, menuItem_proc_uiDisplay));

@@ -425,9 +425,9 @@ void image_main()
             IMG[i][mid_line[i]] = 0;
 }
 
-float get_error()
+float get_error(int num)
 {
-    float a=94-mid_line[100];
+    float a=94-mid_line[num];
     return a;
 }
 

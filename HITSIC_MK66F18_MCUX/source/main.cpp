@@ -96,6 +96,7 @@ uint8_t *p_mflag = NULL;//状态切换指针
 uint8_t prem_flag = 0;//状态切换标志位变量2，previous标志位
 void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffer);
 void mode_switch(void);
+void CAM_ZF9V034_DmaCallback(edma_handle_t *handle, void *userData, bool transferDone, uint32_t tcds);
 void main(void)
 {
     /** 初始化阶段，关闭总中断 */
@@ -178,7 +179,7 @@ void main(void)
                CAM_ZF9V034_CfgWrite(&cameraCfg);                                   //写入配置
                CAM_ZF9V034_GetReceiverConfig(&dmadvpCfg, &cameraCfg);    //生成对应接收器的配置数据，使用此数据初始化接受器并接收图像数据。
                DMADVP_Init(DMADVP0, &dmadvpCfg);
-               DMADVP_TransferCreateHandle(&dmadvpHandle, DMADVP0, CAM_ZF9V034_UnitTestDmaCallback);
+               DMADVP_TransferCreateHandle(&dmadvpHandle, DMADVP0,CAM_ZF9V034_DmaCallback);
                uint8_t *imageBuffer0 = new uint8_t[DMADVP0->imgSize];
                dispBuffer = new disp_ssd1306_frameBuffer_t;
                //uint8_t *imageBuffer1 = new uint8_t[DMADVP0->imgSize];
@@ -225,6 +226,8 @@ void MENU_DataSetUp(void)
 }
 void CAM_ZF9V034_DmaCallback(edma_handle_t *handle, void *userData, bool transferDone, uint32_t tcds)
 {
+    dmadvp_handle_t *dmadvpHandle = (dmadvp_handle_t*)userData;
+    DMADVP_EdmaCallbackService(dmadvpHandle, transferDone);
     //TODO: 补完本回调函数
 
     //TODO: 添加图像处理（转向控制也可以写在这里）

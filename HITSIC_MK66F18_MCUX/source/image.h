@@ -48,7 +48,7 @@ uint8_t find_continue(uint8_t i_start, uint8_t j_start);
 void ordinary_two_line(void);
 void image_main();
 void get_mid_line(void);
-float get_error(void);
+float get_error(int num);
 
 void my_memset(uint8_t* ptr, uint8_t num, uint8_t size);
 #endif //
