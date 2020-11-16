@@ -7,8 +7,8 @@
 typedef struct _cardata{
 
     int Motorspeed[3]= {22,0,50};
-    float servo_mid=7.75;            //定义舵机中值
-    float servo_pwm=7.75;        //定义舵机pwm值
+    float servo_mid=7.55;            //定义舵机中值
+    float servo_pwm=7.55;        //定义舵机pwm值
     float Kp = 0.019;                //定义比例系数
     float Kd = 0.012;     //定义积分系数
     int foresight = 100;//定义前瞻，摄像头以多远为标准
