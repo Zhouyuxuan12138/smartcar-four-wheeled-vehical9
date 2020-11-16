@@ -198,7 +198,8 @@ void main(void)
         break;
         case 0x02:
                 {
-                    MENU_Resume();
+                    MENU_Suspend();
+                    DISP_SSD1306_BufferUpload((uint8_t*) DISP_image_100thAnniversary);
                 while(true)
                  {
                     prem_flag = mode_flag;
@@ -256,7 +257,7 @@ void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffe
 }
 void mode_switch(void)
 {
-    (GPIO_PinRead(GPIOA,9) == 0)? ((*p_mflag) |= 0x01):((*p_mflag) &= 0xfe);
+    (GPIO_PinRead(GPIOA, 9) == 0)? ((*p_mflag) |= 0x01):((*p_mflag) &= 0xfe);
     (GPIO_PinRead(GPIOA,11) == 0)? ((*p_mflag) |= 0x02):((*p_mflag) &= 0xfd);
     (GPIO_PinRead(GPIOA,13) == 0)? ((*p_mflag) |= 0x04):((*p_mflag) &= 0xfb);
     (GPIO_PinRead(GPIOA,15) == 0)? ((*p_mflag) |= 0x08):((*p_mflag) &= 0xf7);

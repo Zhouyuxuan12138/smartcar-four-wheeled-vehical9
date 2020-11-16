@@ -4,7 +4,6 @@
 #include "sc_ftm.h"
 #include "image.h"
 
-
 typedef struct _cardata{
 
     int Motorspeed[3]= {22,0,50};
