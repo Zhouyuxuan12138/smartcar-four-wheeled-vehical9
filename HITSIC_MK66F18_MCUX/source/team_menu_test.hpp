@@ -68,6 +68,8 @@ void our_menu_test(menu_list_t *menu)
         MENU_ListInsert(TestList, MENU_ItemConstruct(nullType, NULL, "camerapar", 0, 0));
         MENU_ListInsert(TestList,
                        MENU_ItemConstruct(variType, &(c_data[0].foresight), "foresight",13, menuItem_data_global));
+        MENU_ListInsert(TestList,
+                       MENU_ItemConstruct(variType, &(threshold), "threshold",14, menuItem_data_global));
         MENU_ListInsert(TestList, MENU_ItemConstruct(nullType, NULL, "function", 0, 0));
         MENU_ListInsert(TestList,
                 MENU_ItemConstruct(procType,team_camtoled, "cam_toled", 0, menuItem_proc_uiDisplay));
