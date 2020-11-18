@@ -83,7 +83,7 @@ FATFS fatfs;                                   //逻辑驱动器的工作区
 #include "sc_test.hpp"
 
 #include "image.h"
-#include"team_menu_test.hpp"
+#include"team_menu.hpp"
 
 cam_zf9v034_configPacket_t cameraCfg;
 dmadvp_config_t dmadvpCfg;
