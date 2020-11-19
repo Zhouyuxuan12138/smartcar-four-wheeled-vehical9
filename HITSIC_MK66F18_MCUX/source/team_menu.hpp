@@ -5,6 +5,7 @@
 #include "app_menu.hpp"
 #include "team_ctr.hpp"
 #include "image.h"//图像处理代码库
+#include "team_elec.hpp"
 
 void team_camtoled(void*)
 {
@@ -74,9 +75,13 @@ void our_menu_test(menu_list_t *menu)
                        MENU_ItemConstruct(variType, &(c_data[0].foresight), "foresight",13, menuItem_data_global));
         MENU_ListInsert(TestList,
                        MENU_ItemConstruct(variType, &(threshold), "threshold",14, menuItem_data_global));
-        MENU_ListInsert(TestList, MENU_ItemConstruct(nullType, NULL, "function", 0, 0));
+        MENU_ListInsert(TestList, MENU_ItemConstruct(nullType, NULL, "elec", 0, 0));
         MENU_ListInsert(TestList,
-                MENU_ItemConstruct(procType,team_camtoled, "cam_toled", 0, menuItem_proc_uiDisplay));
+                               MENU_ItemConstruct(variType, &(AD[0]), "left elec",0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
+        MENU_ListInsert(TestList,
+                               MENU_ItemConstruct(variType, &(AD[1]), "right elec",0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
+
+
     }
 }
 #endif // ! HITSIC_USE_APP_MENU

@@ -25,7 +25,8 @@ void servo_pid()
 {
     servo_init(&(c_data[0].servo_pwm));
     float pwm_error = 0;
-    error_n = get_error(c_data[0].foresight);
+    //error_n = get_error(c_data[0].foresight);
+    error_n = (float)Get_erro();
     pwm_error = c_data[0].Kp*error_n+c_data[0].Kd*(error_n-error_n_1);
     c_data[0].servo_pwm=c_data[0].servo_mid+pwm_error;
     if(c_data[0].servo_pwm<6.8)
@@ -40,3 +41,4 @@ void servo()
 {
     SCFTM_PWM_ChangeHiRes(FTM3,kFTM_Chnl_7,50,c_data[0].servo_pwm);
 }
+

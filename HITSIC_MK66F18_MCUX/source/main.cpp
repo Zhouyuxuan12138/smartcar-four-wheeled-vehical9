@@ -95,6 +95,7 @@ uint8_t mode_flag = 0;//状态切换标志位变量
 uint8_t *p_mflag = NULL;//状态切换指针
 uint8_t prem_flag = 0;//状态切换标志位变量2，previous标志位
 void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffer);
+void elec_runcar(void);
 void mode_switch(void);
 void CAM_ZF9V034_DmaCallback(edma_handle_t *handle, void *userData, bool transferDone, uint32_t tcds);
 void main(void)
@@ -163,6 +164,7 @@ void main(void)
         case 0x00: {
             {
                 MENU_Resume();
+                elec_runcar();
             while(true)
              {
                 prem_flag = mode_flag;
@@ -204,6 +206,21 @@ void main(void)
                 while(true)
                  {
                     prem_flag = mode_flag;
+                    SDK_DelayAtLeastUs(2000000,180*1000*1000);
+                    if(prem_flag != mode_flag) break;
+                  }
+                }
+                    break;
+        case 0x03:
+                {
+                    MENU_Suspend();
+                    DISP_SSD1306_Fill(0);
+                while(true)
+                 {
+                    DISP_SSD1306_Printf_F6x8(30,5,%f,AD[0]);
+                    DISP_SSD1306_Printf_F6x8(30,5,%f,AD[1]);
+                    prem_flag = mode_flag;
+                    elec_runcar();
                     SDK_DelayAtLeastUs(2000000,180*1000*1000);
                     if(prem_flag != mode_flag) break;
                   }
@@ -257,6 +274,15 @@ void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffe
                              DISP_SSD1306_BufferUpload((uint8_t*) dispBuffer);
                              DMADVP_TransferSubmitEmptyBuffer(DMADVP0, dmadvpHandle, fullBuffer);
                              DMADVP_TransferStart(DMADVP0, dmadvpHandle);
+}
+void elec_runcar(void)
+{
+    LV_Sample();
+    LV_Get_Val();
+    LV_Sort();
+    Normalized();
+    servo_pid();
+
 }
 void mode_switch(void)
 {
