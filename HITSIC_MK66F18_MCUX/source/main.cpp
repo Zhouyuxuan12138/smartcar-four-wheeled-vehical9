@@ -217,11 +217,12 @@ void main(void)
                     DISP_SSD1306_Fill(0);
                 while(true)
                  {
-                    DISP_SSD1306_Printf_F6x8(30,5,%f,AD[0]);
-                    DISP_SSD1306_Printf_F6x8(30,5,%f,AD[1]);
+                    DISP_SSD1306_Printf_F6x8(30,5,"%f",AD[0]);
+                    DISP_SSD1306_Printf_F6x8(30,7,"%f",AD[1]);
                     prem_flag = mode_flag;
                     elec_runcar();
-                    SDK_DelayAtLeastUs(2000000,180*1000*1000);
+                    SDK_DelayAtLeastUs(8000000,180*1000*1000);
+                    DISP_SSD1306_Fill(0);
                     if(prem_flag != mode_flag) break;
                   }
                 }

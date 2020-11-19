@@ -1,7 +1,7 @@
 #include "team_elec.hpp"
 
 #define SampleTimes 16
-#define MinLVGot 50
+#define MinLVGot 5
 
 uint32_t LV_Temp[2][SampleTimes];
 uint32_t LV[2]={0,0};
@@ -13,7 +13,7 @@ void LV_Sample(void)                             // ad采集函数
   {
     /*获取采样初值*/
     LV_Temp[0][i]=SCADC_Sample(ADC0,0,23);//这里只有两个电感，所以这个只有两行
-    LV_Temp[1][i]=SCADC_Sample(ADC0,0,12);//adc_once是指的是采集到的初始电感值
+    LV_Temp[1][i]=SCADC_Sample(ADC0,0,12);
   }
 }
 
