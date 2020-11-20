@@ -17,7 +17,6 @@ typedef struct _cardata{
 
 
 extern cardata c_data[2];
-extern uint32_t AD[2];
 
 void Motor_ctr(void);//电机控制，暂时匀速
 

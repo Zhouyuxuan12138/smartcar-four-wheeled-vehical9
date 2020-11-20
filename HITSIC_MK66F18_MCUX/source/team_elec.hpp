@@ -3,7 +3,11 @@
 
 #include "hitsic_common.h"
 #include "sc_adc.h"
-
+#define MinLVGot 3
+#define SampleTimes 16
+extern uint32_t ADC[8];
+extern uint32_t LV[8];
+extern uint32_t AD[8];
 
 /**********************************************************************************************************************
 *  @brief      AD采集函数

@@ -164,9 +164,9 @@ void main(void)
         case 0x00: {
             {
                 MENU_Resume();
-                elec_runcar();
             while(true)
              {
+                elec_runcar();
                 prem_flag = mode_flag;
                 SDK_DelayAtLeastUs(2000000,180*1000*1000);
                 if(prem_flag != mode_flag) break;
@@ -217,10 +217,10 @@ void main(void)
                     DISP_SSD1306_Fill(0);
                 while(true)
                  {
-                    DISP_SSD1306_Printf_F6x8(30,5,"%f",AD[0]);
-                    DISP_SSD1306_Printf_F6x8(30,7,"%f",AD[1]);
                     prem_flag = mode_flag;
                     elec_runcar();
+                    DISP_SSD1306_Printf_F6x8(30,5,"%f",AD[0]);
+                    DISP_SSD1306_Printf_F6x8(30,7,"%f",AD[1]);
                     SDK_DelayAtLeastUs(8000000,180*1000*1000);
                     DISP_SSD1306_Fill(0);
                     if(prem_flag != mode_flag) break;
@@ -282,7 +282,8 @@ void elec_runcar(void)
     LV_Get_Val();
     LV_Sort();
     Normalized();
-    servo_pid();
+    LV_average();
+    //servo_pid();
 
 }
 void mode_switch(void)

@@ -53,7 +53,7 @@ void team_camtoled(void*)
 
 void our_menu_test(menu_list_t *menu)
 {
-    static menu_list_t *TestList = MENU_ListConstruct("9th_testMenu", 20, menu);
+    static menu_list_t *TestList = MENU_ListConstruct("9th_testMenu", 30, menu);
     assert(TestList);
     MENU_ListInsert(menu, MENU_ItemConstruct(menuType, TestList, "9th_testMenu", 0, 0));
     {
@@ -77,10 +77,21 @@ void our_menu_test(menu_list_t *menu)
                        MENU_ItemConstruct(variType, &(threshold), "threshold",14, menuItem_data_global));
         MENU_ListInsert(TestList, MENU_ItemConstruct(nullType, NULL, "elec", 0, 0));
         MENU_ListInsert(TestList,
-                               MENU_ItemConstruct(variType, &(AD[0]), "left elec",0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
+                               MENU_ItemConstruct(variType, &(ADC[0]), "adc0",0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
         MENU_ListInsert(TestList,
-                               MENU_ItemConstruct(variType, &(AD[1]), "right elec",0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
-
+                               MENU_ItemConstruct(variType, &(ADC[1]), "adc1",0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
+        MENU_ListInsert(TestList,
+                               MENU_ItemConstruct(variType, &(ADC[2]), "adc2",0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
+        MENU_ListInsert(TestList,
+                               MENU_ItemConstruct(variType, &(ADC[3]), "adc3",0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
+        MENU_ListInsert(TestList,
+                               MENU_ItemConstruct(variType, &(ADC[4]), "adc4",0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
+              MENU_ListInsert(TestList,
+                               MENU_ItemConstruct(variType, &(ADC[5]), "adc5",0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
+              MENU_ListInsert(TestList,
+                               MENU_ItemConstruct(variType, &(ADC[6]), "adc6",0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
+                     MENU_ListInsert(TestList,
+                               MENU_ItemConstruct(variType, &(ADC[7]), "adc7",0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
 
     }
 }
