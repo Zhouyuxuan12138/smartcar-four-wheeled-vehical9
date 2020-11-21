@@ -166,9 +166,12 @@ void main(void)
                 MENU_Resume();
             while(true)
              {
-                elec_runcar();
                 prem_flag = mode_flag;
-                SDK_DelayAtLeastUs(2000000,180*1000*1000);
+                LV_Sample();
+                LV_Get_Val();
+                LV_Sort();
+                Normalized();
+                elec_runcar();
                 if(prem_flag != mode_flag) break;
               }
             }
@@ -219,9 +222,8 @@ void main(void)
                  {
                     prem_flag = mode_flag;
                     elec_runcar();
-                    DISP_SSD1306_Printf_F6x8(30,5,"%f",AD[0]);
-                    DISP_SSD1306_Printf_F6x8(30,7,"%f",AD[1]);
-                    SDK_DelayAtLeastUs(8000000,180*1000*1000);
+                    DISP_SSD1306_Printf_F6x8(30,5,"%d",AD[0]);
+                    DISP_SSD1306_Printf_F6x8(30,7,"%d",AD[1]);
                     DISP_SSD1306_Fill(0);
                     if(prem_flag != mode_flag) break;
                   }
@@ -278,13 +280,7 @@ void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffe
 }
 void elec_runcar(void)
 {
-    LV_Sample();
-    LV_Get_Val();
-    LV_Sort();
-    Normalized();
-    LV_average();
-    //servo_pid();
-
+    servo_pid();
 }
 void mode_switch(void)
 {
