@@ -35,9 +35,9 @@ void LV_Get_Val(void)//约0.3mS                  //对采集的值滤波
   {
     for(uint8_t j=0; j < SampleTimes;j++)
     {
-         if(LV_Temp[i][j]>500)//剔除毛刺信号
+         if(LV_Temp[i][j]>240)//剔除毛刺信号
          {
-             LV_Temp[i][j] = 500;
+             LV_Temp[i][j] = 240;
          }
     }
   }
@@ -75,7 +75,7 @@ void Normalized(void)
         for(uint8_t j=0; j < SampleTimes;j++)
         {
             int thisdata = LV_Temp[i][j];
-            LV_Temp[i][j] = ((thisdata-min)/(max - min));
+            LV_Temp[i][j] = (((thisdata-min)/(max - min))*100U);
         }
     }
 
@@ -104,8 +104,11 @@ int *LV_average(void)
 }
 int Get_erro(void)
 {
+    LV_Sample();
+    LV_Get_Val();
+    LV_Sort();
     int *p;
     p = LV_average();
     //return ADC[1]-ADC[7]
-    return((p[0]-p[1])/(p[1]*p[0]));
+    return (AD[0]-AD[1])/(AD[1]*AD[0]);
 }

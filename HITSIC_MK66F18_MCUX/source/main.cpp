@@ -167,10 +167,6 @@ void main(void)
             while(true)
              {
                 prem_flag = mode_flag;
-                LV_Sample();
-                LV_Get_Val();
-                LV_Sort();
-                Normalized();
                 elec_runcar();
                 if(prem_flag != mode_flag) break;
               }
@@ -224,7 +220,6 @@ void main(void)
                     elec_runcar();
                     DISP_SSD1306_Printf_F6x8(30,5,"%d",AD[0]);
                     DISP_SSD1306_Printf_F6x8(30,7,"%d",AD[1]);
-                    DISP_SSD1306_Fill(0);
                     if(prem_flag != mode_flag) break;
                   }
                 }

@@ -4,7 +4,7 @@
 #include "sc_ftm.h"
 #include "image.h"
 #include "team_elec.hpp"
-
+extern float error_n;
 typedef struct _cardata{
 
     int Motorspeed[3]= {22,0,50};

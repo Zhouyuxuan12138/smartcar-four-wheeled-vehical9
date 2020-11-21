@@ -92,7 +92,8 @@ void our_menu_test(menu_list_t *menu)
                                MENU_ItemConstruct(varfType, &(ADC[6]), "adc6",0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));*/
                      MENU_ListInsert(TestList,
                                MENU_ItemConstruct(variType, &(ADC[7]), "adc7rig",0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
-
+                     MENU_ListInsert(TestList,
+                                              MENU_ItemConstruct(varfType, &(error_n), "erron",0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
     }
 }
 #endif // ! HITSIC_USE_APP_MENU
