@@ -26,8 +26,8 @@ void servo_pid()
     //servo_init(&(c_data[0].servo_pwm));
     float pwm_error = 0;
     //error_n = get_error(c_data[0].foresight);
-    Get_erro();
-    error_n = (float)(AD[0]-AD[1])/(AD[1]*AD[0]);
+    error_n = Get_erro();
+    //error_n = (float)(AD[0]-AD[1])/(AD[1]*AD[0]);
     pwm_error = c_data[0].Kp*error_n+c_data[0].Kd*(error_n-error_n_1);
     c_data[0].servo_pwm=c_data[0].servo_mid+pwm_error;
     if(c_data[0].servo_pwm<6.8)
