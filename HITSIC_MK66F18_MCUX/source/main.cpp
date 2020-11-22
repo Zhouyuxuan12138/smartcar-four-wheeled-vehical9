@@ -167,6 +167,7 @@ void main(void)
             while(true)
              {
                 prem_flag = mode_flag;
+                Get_erro();
                 if(prem_flag != mode_flag) break;
               }
             }
