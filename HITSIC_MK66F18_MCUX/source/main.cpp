@@ -220,7 +220,7 @@ void main(void)
                  {
                     prem_flag = mode_flag;
                     elec_runcar();
-                    DISP_SSD1306_Printf_F6x8(30,5,"%c","elec mode");
+                    DISP_SSD1306_Printf_F6x8(30,5,"%c","elecmode");
                     if(prem_flag != mode_flag) break;
                   }
                 }

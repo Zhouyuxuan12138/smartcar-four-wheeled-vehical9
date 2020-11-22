@@ -49,9 +49,9 @@ void team_camtoled(void*)
                               }
                           }
 
-                          //DISP_SSD1306_BufferUpload((uint8_t*) dispBuffer);
+                          DISP_SSD1306_BufferUpload((uint8_t*) dispBuffer);
                           DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, fullBuffer);
-                          DMADVP_TransferStart(DMADVP0,&dmadvpHandle);
+                          //DMADVP_TransferStart(DMADVP0,&dmadvpHandle);
                           if(GPIO_PinRead(GPIOE, 10) == 0) break;
            }
 }
