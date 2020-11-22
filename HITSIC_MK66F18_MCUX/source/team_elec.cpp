@@ -2,21 +2,14 @@
 
 
 
-uint32_t ADC[8];
-uint32_t LV_Temp[2][SampleTimes];
-float LV[2]={0,0};
-float AD[2]={0,0};
+uint32_t ADC[8];//两个AD通道读取电感值
+uint32_t LV_Temp[2][SampleTimes];//电感处理函数
+float LV[2]={0,0};//数组
+float AD[2]={0,0};//保存滤波后数据数组
 
 void LV_Sample(void)                             // ad采集函数
 {
-
-    //ADC[0]=SCADC_Sample(ADC0,0,23);//这里只有两个电感，所以这个只有两行
     ADC[1]=SCADC_Sample(ADC0,0,12);
-    /*ADC[2]=SCADC_Sample(ADC0,0,13);
-    ADC[3]=SCADC_Sample(ADC0,0,10);
-    ADC[4]=SCADC_Sample(ADC0,0,11);
-    ADC[5]=SCADC_Sample(ADC0,0,16);
-    ADC[6]=SCADC_Sample(ADC0,0,17);*/
     ADC[7]=SCADC_Sample(ADC0,0,18);
 
   for(uint8_t i=0 ; i < SampleTimes; i++)
@@ -66,7 +59,7 @@ void Swap(uint32_t*a,uint32_t*b)
     *a = temp;
 
 }
-void Normalized(void)
+void Normalized(void)//归一化函数加入车无法运行
 {
     for(uint8_t i=0;i<2;i++)
     {

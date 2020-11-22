@@ -1,5 +1,6 @@
 #include "team_ctr.hpp"
 
+bool delay_runcar = 0;//延迟发车标志位
 float error_n = 0;
 float error_n_1 = 0;
 
@@ -10,10 +11,20 @@ cardata c_data[2]=
 };
 void Motor_ctr(void)//电机控制，暂时匀速
 {
+    if(ADC[1]<=40&&ADC[7]<=40||delay_runcar==0)
+    {
+    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_0, 20000U, 0U);//右轮正转kFTM_Chnl_0> kFTM_Chnl_1
+    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_1, 20000U, 0U);
+    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_2, 20000U, 0U);
+    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_3, 20000U, 0U);//左轮正转kFTM_Chnl_3> kFTM_Chnl_2
+    }
+    else
+    {
     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_0, 20000U, c_data[0].Motorspeed[0]);//右轮正转kFTM_Chnl_0> kFTM_Chnl_1
     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_1, 20000U, 0U);
     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_2, 20000U, 0U);
     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_3, 20000U, c_data[0].Motorspeed[0]);//左轮正转kFTM_Chnl_3> kFTM_Chnl_2
+    }
 }
 void servo_init(float *pwm)
 {

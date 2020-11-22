@@ -6,7 +6,12 @@
 #include "team_ctr.hpp"
 #include "image.h"//图像处理代码库
 #include "team_elec.hpp"
-
+/**********************************************************************************************************************
+*  @brief      摄像头打印赛道函数暂时没有用
+*  @return     void
+*  @since      v1.1
+*  Sample usage:                 team_camtoled();
+**********************************************************************************************************************/
 void team_camtoled(void*)
 {
     cam_zf9v034_configPacket_t cameraCfg;
@@ -50,7 +55,13 @@ void team_camtoled(void*)
                           if(GPIO_PinRead(GPIOE, 10) == 0) break;
            }
 }
-
+/**********************************************************************************************************************
+*  @brief                        菜单构建函数
+*  @param      *b                menu_list_t指针，待插入菜单父菜单节点
+*  @return                       void insert后的菜单
+*  @since                        v1.1
+*  Sample usage:                 our_menu_test(menu_menuRoot);
+**********************************************************************************************************************/
 void our_menu_test(menu_list_t *menu)
 {
     static menu_list_t *TestList = MENU_ListConstruct("9th_testMenu", 30, menu);

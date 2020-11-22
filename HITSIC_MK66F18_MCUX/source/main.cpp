@@ -94,10 +94,10 @@ inv::mpu6050_t imu_6050(imu_i2c);
 uint8_t mode_flag = 0;//状态切换标志位变量
 uint8_t *p_mflag = NULL;//状态切换指针
 uint8_t prem_flag = 0;//状态切换标志位变量2，previous标志位
-void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffer);
-void elec_runcar(void);
-void mode_switch(void);
-void CAM_ZF9V034_DmaCallback(edma_handle_t *handle, void *userData, bool transferDone, uint32_t tcds);
+void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffer);//摄像头跑车函数
+void elec_runcar(void);//电磁跑车函数
+void mode_switch(void);//模式切换中断回调函数
+void CAM_ZF9V034_DmaCallback(edma_handle_t *handle, void *userData, bool transferDone, uint32_t tcds);//摄像头初始化回调函数
 void main(void)
 {
     /** 初始化阶段，关闭总中断 */
@@ -159,7 +159,7 @@ void main(void)
     //float f = arm_sin_f32(0.6f);//暂时不知道功能
     while (true)
     {
-        switch(mode_flag)
+        switch(mode_flag)//菜单模式
         {
         case 0x00: {
             {
@@ -167,13 +167,12 @@ void main(void)
             while(true)
              {
                 prem_flag = mode_flag;
-                elec_runcar();
                 if(prem_flag != mode_flag) break;
               }
             }
                 break;
         }break;
-        case 0x01:
+        case 0x01://摄像头跑车模式
         {
             MENU_Suspend();
             CAM_ZF9V034_GetDefaultConfig(&cameraCfg);                                   //设置摄像头配置
@@ -198,7 +197,7 @@ void main(void)
 
         }
         break;
-        case 0x02:
+        case 0x02://百年校庆图标模式
                 {
                     MENU_Suspend();
                     DISP_SSD1306_BufferUpload((uint8_t*) DISP_image_100thAnniversary);
@@ -210,21 +209,23 @@ void main(void)
                   }
                 }
                     break;
-        case 0x03:
+        case 0x03://电磁跑车模式
                 {
-                    MENU_Suspend();
+                    MENU_Suspend();//延迟发车
                     DISP_SSD1306_Fill(0);
+                    SDK_DelayAtLeastUs(5000000,180*1000*1000);
+                    delay_runcar = 1;
                 while(true)
                  {
                     prem_flag = mode_flag;
                     elec_runcar();
-                    DISP_SSD1306_Printf_F6x8(30,5,"%d",AD[0]);
-                    DISP_SSD1306_Printf_F6x8(30,7,"%d",AD[1]);
+                    DISP_SSD1306_Printf_F6x8(30,5,"%c","elec mode");
                     if(prem_flag != mode_flag) break;
                   }
                 }
+                delay_runcar = 0;
                     break;
-        default: break;
+        default: break;//其他模式，待定
         }
         //TODO: 在这里添加车模保护代码
     }
@@ -273,11 +274,11 @@ void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffe
                              DMADVP_TransferSubmitEmptyBuffer(DMADVP0, dmadvpHandle, fullBuffer);
                              DMADVP_TransferStart(DMADVP0, dmadvpHandle);
 }
-void elec_runcar(void)
+void elec_runcar(void)//电磁跑车函数
 {
     servo_pid();
 }
-void mode_switch(void)
+void mode_switch(void)//模式切换中断回调函数
 {
     (GPIO_PinRead(GPIOA, 9) == 0)? ((*p_mflag) |= 0x01):((*p_mflag) &= 0xfe);
     (GPIO_PinRead(GPIOA,11) == 0)? ((*p_mflag) |= 0x02):((*p_mflag) &= 0xfd);
