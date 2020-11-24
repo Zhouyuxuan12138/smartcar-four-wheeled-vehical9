@@ -5,14 +5,18 @@ float error_n = 0;      //舵机偏差
 float error_n_1 = 0;    //舵机前一次偏差
 int32_t mot_left = 0;  //电机左轮编码器读取
 int32_t mot_right = 0; //电机右轮编码器读取
-int32_t mot_err = 0;   //电机偏差值
-int32_t mot_err1 = 0;  //电机前一次偏差值
-int32_t mot_err2 = 0;  //电机再前一次偏差值
+
+int32_t mot_err_l = 0;   //左电机偏差值
+int32_t mot_err1_l = 0;  //左电机前一次偏差值
+
+int32_t mot_err_r = 0;   //右电机偏差值
+int32_t mot_err1_r = 0;  //右电机前一次偏差值
+
 
 cardata c_data[2]=
 {
-        {{22,0,50},7.55,7.55,0.019,0.012,0.020,0.010,100},
-        {{22,0,50},7.55,7.55,0.019,0.012,0.020,0.010,100},
+        {{22,0,300},7.55,7.55,0.019,0.012,0.020,0.010,20,20,100},
+        {{22,0,300},7.55,7.55,0.019,0.012,0.020,0.010,20,20,100},
 };
 void Motor_ctr(void)//电机控制，暂时匀速
 {
@@ -28,12 +32,26 @@ void Motor_ctr(void)//电机控制，暂时匀速
     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_3, 20000U, 0U);//左轮正转kFTM_Chnl_3> kFTM_Chnl_2
     }
     else*/
-
-    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_0, 20000U, c_data[0].Motorspeed[0]);//右轮正转kFTM_Chnl_0> kFTM_Chnl_1
+    if(c_data[0].M_right_pwm>=0)
+    {
+    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_0, 20000U, c_data[0].M_right_pwm);//右轮正转kFTM_Chnl_0> kFTM_Chnl_1
     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_1, 20000U, 0U);
+    }
+    else
+    {
+     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_0, 20000U, 0U);//右轮反转kFTM_Chnl_0> kFTM_Chnl_1
+     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_1, 20000U, -c_data[0].M_right_pwm);
+    }
+    if(c_data[0].M_left_pwm>=0)
+    {
     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_2, 20000U, 0U);
-    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_3, 20000U, c_data[0].Motorspeed[0]);//左轮正转kFTM_Chnl_3> kFTM_Chnl_2
-
+    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_3, 20000U, c_data[0].M_left_pwm);//左轮正转kFTM_Chnl_3> kFTM_Chnl_2
+    }
+    else
+    {
+        SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_2, 20000U, -c_data[0].M_left_pwm);
+        SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_3, 20000U, 0U);//左轮反转kFTM_Chnl_3> kFTM_Chnl_2
+    }
 }
 void servo_init(float *pwm)
 {
@@ -64,13 +82,15 @@ void servo()
 
 void Motor_pid()
 {
-
-
-
-
-
-
-
-
+    float PIDInc_l;
+    float PIDInc_r;
+     mot_err_l = c_data[0].Motorspeed[0] - mot_left;
+     mot_err_r = c_data[0].Motorspeed[0] - mot_right;
+     PIDInc_l = (c_data[0].M_Kp * mot_err_l) - (c_data[0].M_Ki * mot_err1_l);
+     mot_err1_l = mot_err_l;
+     PIDInc_r = (c_data[0].M_Kp * mot_err_r) - (c_data[0].M_Ki * mot_err1_r);
+     mot_err1_r = mot_err_r;
+     ((c_data[0].Motorspeed[0])+PIDInc_l)>((c_data[0].Motorspeed[2]))?(c_data[0].M_left_pwm)=(c_data[0].Motorspeed[2]):(c_data[0].M_left_pwm)=((c_data[0].Motorspeed[0])+PIDInc_l);
+     ((c_data[0].Motorspeed[0])+PIDInc_r)>((c_data[0].Motorspeed[2]))?(c_data[0].M_right_pwm)=(c_data[0].Motorspeed[2]):(c_data[0].M_right_pwm)=((c_data[0].Motorspeed[0])+PIDInc_r);
 
 }
