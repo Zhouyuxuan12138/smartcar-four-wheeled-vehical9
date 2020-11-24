@@ -1,8 +1,18 @@
+/*
+ * image.h
+ *
+ *  Created on: 2020年11月10日
+ *      Author: liuhe
+ */
+
 #ifndef _IMAGE_H
 #define _IMAGE_H
 #include <stdio.h>
 #include <stdlib.h>
+//#include "cv.h"
+//#include "highgui.h"
 #include <math.h>
+#include "image.h"
 
 #define MISS 255
 #define CAMERA_H  120                            //图片高度
@@ -27,8 +37,7 @@
 extern uint8_t IMG[CAMERA_H][CAMERA_W];//二值化后图像数组
 extern uint8_t image_Buffer_0[CAMERA_H][CAMERA_W];
 extern uint8_t* fullBuffer;//指向灰度图的首地址
-extern uint8_t mid_line[CAMERA_H];
-
+extern int threshold;
 void head_clear(void);
 void THRE(void);
 int find_f(int a);
@@ -39,6 +48,7 @@ uint8_t find_continue(uint8_t i_start, uint8_t j_start);
 void ordinary_two_line(void);
 void image_main();
 void get_mid_line(void);
+float get_error(int num);
 
 void my_memset(uint8_t* ptr, uint8_t num, uint8_t size);
 #endif //

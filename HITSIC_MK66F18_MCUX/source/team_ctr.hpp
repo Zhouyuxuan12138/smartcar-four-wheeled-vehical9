@@ -2,64 +2,47 @@
 #define TEAM_CTR_HPP_
 #include "hitsic_common.h"
 #include "sc_ftm.h"
-extern int Motorspeed[3] = {20,0,50};
+#include "image.h"
+#include "team_elec.hpp"
+extern float error_n;//偏差值，定义为全局变量，为了在菜单显示
+extern bool delay_runcar;//延迟发车标志位
+typedef struct _cardata{
+    int Motorspeed[3]= {22,0,50};
+    float servo_mid=7.55;            //定义舵机中值
+    float servo_pwm=7.55;        //定义舵机pwm值
+    float Kp = 0.019;                //定义比例系数
+    float Kd = 0.012;     //定义积分系数
+    int foresight = 100;//定义前瞻，摄像头以多远为标准
+}cardata;
 
-extern float pulse=7.6;
-
-typedef struct _pid{
-    float setmid;            //定义设定值
-    float actualmid;        //定义实际值
-    float err;                //定义偏差值
-    float err_next;            //定义上一个偏差值
-    float err_last;            //定义最上前的偏差值
-    float Kp,Kd;            //定义比例、积分、微分系数
-}pid;
-
-void Motor_ctr(void)//电机控制，暂时匀速
-{
-    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_0, 20000U, Motorspeed[0]);//右轮正转kFTM_Chnl_0> kFTM_Chnl_1
-    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_1, 20000U, 0U);
-    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_2, 20000U, 0U);
-    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_3, 20000U, Motorspeed[0]);//左轮正转kFTM_Chnl_3> kFTM_Chnl_2
-}
-void PID_init(pid* p,uint8_t *m){
-    p->setmid=96.0;
-    p->actualmid = m[100];
-    p->err=0.0;
-    p->err_last=0.0;
-    p->err_next=0.0;
-    p->Kp=0.2;
-    p->Kd=0.2;
-}
-
-void pd_ctr(pid *p)
-{
-        p->setmid = 96;
-        p->err=p->setmid-p->actualmid;
-        float increment=p->Kp*(p->err-p->err_next)+p->Kd*(p->err-2*p->err_next+p->err_last);
-        p->actualmid+=increment;
-        p->err_last=p->err_next;
-        p->err_next=p->err;
-}
-
-float pd_generate_pulse(pid *p)
-{
-    pulse = (0.05*(p->err)) + 7.6f;
-    if((pulse<=6.6)||(pulse>=8.6)) pulse = 7.6;
-
-}
-
-void PWM_clr_servo(void)
-{
-
-    SCFTM_PWM_ChangeHiRes(FTM3, kFTM_Chnl_7, 50U, pulse);
-}
-
-
-
-
-
-
-
+extern cardata c_data[2];//车数据数组
+/**********************************************************************************************************************
+*  @brief      电机控制函数在定时器中断中运行
+*  @return     void 匀速控制舵机
+*  @since      v1.1
+*  Sample usage:                 Motor_ctr;
+**********************************************************************************************************************/
+void Motor_ctr(void);//电机控制，暂时匀速
+/**********************************************************************************************************************
+*  @brief      舵机初始化
+*  @return     void 电磁或摄像头控制舵机
+*  @since      v1.1
+*  Sample usage:                 servo_init;
+**********************************************************************************************************************/
+void servo_init(float *pwm);
+/**********************************************************************************************************************
+*  @brief      pid控制函数在跑车函数主函数中运行
+*  @return     void 舵机偏差
+*  @since      v1.1
+*  Sample usage:                 servo_pid();
+**********************************************************************************************************************/
+void servo_pid(void);
+/**********************************************************************************************************************
+*  @brief      pid控制函数在舵机中断中运行
+*  @return     void 舵机pwm值
+*  @since      v1.1
+*  Sample usage:                 servo;
+**********************************************************************************************************************/
+void servo(void);
 
 #endif
