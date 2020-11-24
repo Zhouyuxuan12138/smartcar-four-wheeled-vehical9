@@ -3,11 +3,11 @@
 bool delay_runcar = 0;//延迟发车标志位
 float error_n = 0;      //舵机偏差
 float error_n_1 = 0;    //舵机前一次偏差
-int16_t mot_left = 0;  //电机左轮编码器读取
-int16_t mot_right = 0; //电机右轮编码器读取
-int16_t mot_err = 0;   //电机偏差值
-int16_t mot_err1 = 0;  //电机前一次偏差值
-int16_t mot_err2 = 0;  //电机再前一次偏差值
+int32_t mot_left = 0;  //电机左轮编码器读取
+int32_t mot_right = 0; //电机右轮编码器读取
+int32_t mot_err = 0;   //电机偏差值
+int32_t mot_err1 = 0;  //电机前一次偏差值
+int32_t mot_err2 = 0;  //电机再前一次偏差值
 
 cardata c_data[2]=
 {
@@ -16,7 +16,7 @@ cardata c_data[2]=
 };
 void Motor_ctr(void)//电机控制，暂时匀速
 {
-    mot_left = 0U-(SCFTM_GetSpeed(FTM2));
+    mot_left =  -SCFTM_GetSpeed(FTM2);
     SCFTM_ClearSpeed(FTM2);
     mot_right = SCFTM_GetSpeed(FTM1);
     SCFTM_ClearSpeed(FTM1);
@@ -43,7 +43,7 @@ void servo_init(float *pwm)
 }
 void servo_pid()
 {
-    //servo_init(&(c_data[0].servo_pwm));
+    servo_init(&(c_data[0].servo_pwm));
     float pwm_error = 0;
     error_n = get_error(c_data[0].foresight);
     //error_n = Get_erro();
