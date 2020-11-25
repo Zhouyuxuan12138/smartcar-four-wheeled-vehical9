@@ -164,11 +164,10 @@ void main(void)
         case 0x00: {
             {
                 MENU_Resume();
-                Motorsp_Init();//电机速度初始化
             while(true)
              {
+                Motorsp_Init();
                 prem_flag = mode_flag;
-                Motorsp_Init();//电机速度初始化
                 Get_erro();//电磁用
                 if(prem_flag != mode_flag) break;
               }
