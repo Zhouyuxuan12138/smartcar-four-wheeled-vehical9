@@ -8,16 +8,16 @@ extern float error_n;//偏差值，定义为全局变量，为了在菜单显示
 extern bool delay_runcar;//延迟发车标志位
 extern int32_t mot_left ;
 extern int32_t mot_right;
+extern float M_right_drs;
+extern float M_right_pwm;
 typedef struct _cardata{
-    int32_t Motorspeed[3]= {22,0,100};
+    int32_t Motorspeed[3]= {22,0,150};
     float servo_mid=7.55;            //定义舵机中值
     float servo_pwm=7.55;            //定义舵机pwm值
     float Kp = 0.019;                //定义舵机比例系数
     float Kd = 0.012;                //定义舵机微分系数
     float M_Kp = 0.020;              //定义电机比例系数
     float M_Ki = 0.010;              //定义电机积分系数
-    float M_left_pwm = 20;
-    float M_right_pwm = 20;
     int foresight = 100;//定义前瞻，摄像头以多远为标准
 }cardata;
 
@@ -55,6 +55,13 @@ void servo(void);
 *  @return     void 电机占空比
 *  @since      v1.1
 *  Sample usage:                 Motor_pid();
+**********************************************************************************************************************/
+void Motorsp_Init(void);
+/**********************************************************************************************************************
+*  @brief      电机理想速度初始化函数
+*  @return     void 电机理想速度
+*  @since      v1.1
+*  Sample usage:                 Motorsp_Init();
 **********************************************************************************************************************/
 void Motor_pid(void);
 

@@ -164,10 +164,12 @@ void main(void)
         case 0x00: {
             {
                 MENU_Resume();
+                Motorsp_Init();//电机速度初始化
             while(true)
              {
                 prem_flag = mode_flag;
-                Get_erro();
+                Motorsp_Init();//电机速度初始化
+                Get_erro();//电磁用
                 if(prem_flag != mode_flag) break;
               }
             }
@@ -187,6 +189,7 @@ void main(void)
                DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer0);
                //DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer1);
            DMADVP_TransferStart(DMADVP0, &dmadvpHandle);
+               Motorsp_Init();//电机速度初始化
         while(true)
             {
                 prem_flag = mode_flag;

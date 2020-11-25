@@ -75,6 +75,10 @@ void our_menu_test(menu_list_t *menu)
                 MENU_ItemConstruct(variType, &mot_left, "Motor_left", 0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
         MENU_ListInsert(TestList,
                 MENU_ItemConstruct(variType, &mot_right, "Motor_right", 0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
+        MENU_ListInsert(TestList,
+                MENU_ItemConstruct(varfType, &M_right_drs, "MoDres", 0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
+        MENU_ListInsert(TestList,
+                MENU_ItemConstruct(varfType, &M_right_pwm, "MoPwm", 0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));
         MENU_ListInsert(TestList, MENU_ItemConstruct(nullType, NULL, "pidctrl", 0, 0));
         MENU_ListInsert(TestList,
                 MENU_ItemConstruct(varfType, &(c_data[0].Kp), "pid[0]Kp",11, menuItem_data_global));
