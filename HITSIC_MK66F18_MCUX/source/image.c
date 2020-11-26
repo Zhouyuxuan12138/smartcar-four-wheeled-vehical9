@@ -1,10 +1,5 @@
-/*
- * image.c
- *
- *  Created on: 2020年11月10日
- *      Author: liuhe
- */
 #include "image.h"
+#include "my_math.h"
 
 int f[10 * CAMERA_H];//考察连通域联通性
 
@@ -34,6 +29,12 @@ typedef struct {
     road_range   connected[white_num_MAX];
 }road;
 
+typedef struct {
+    int x;
+    int y;
+}point;
+
+
 all_range white_range[CAMERA_H];//所有白条子
 road my_road[CAMERA_H];//赛道
 uint8_t IMG[CAMERA_H][CAMERA_W];//二值化后图像数组
@@ -41,8 +42,233 @@ uint8_t left_line[CAMERA_H], right_line[CAMERA_H];//赛道的左右边界
 uint8_t mid_line[CAMERA_H];
 int all_connect_num = 0;//所有白条子数
 uint8_t top_road;//赛道最高处所在行数
-int threshold = 120;//阈值
-uint8_t* fullBuffer;
+uint8_t threshold = 160;//阈值
+int  foresight=  40;//前瞻
+
+#define turing_point_max_num 10
+
+//11.19添加
+point determined_leftdown_point;
+point determined_leftup_point;
+point determined_rightdown_point;
+point determined_rightup_point;
+
+//标志位
+uint8_t banmaxian_flag = 0;
+uint8_t cross_flag = 0;
+
+
+
+//求取斜率
+float check_k(int line, uint8_t* array, int length, int flag)
+{
+    float k = 0;
+    int sumx = 0;
+    int sumy = 0;
+    int sumxy = 0;
+    int sumx2 = 0;
+    for (int i = 0; i < length; i++)
+    {
+        if (flag == 1)
+        {
+            sumx = sumx + line + i;
+            sumy = sumy + array[line + i];
+            sumxy = sumxy + (line + i)*array[line + i];
+            sumx2 = sumx2 + (line + i) * (line + i);
+        }
+        if (flag == 0)
+        {
+            sumx = sumx + line - i;
+            sumy = sumy + array[line - i];
+            sumxy = sumxy + (line - i)*array[line - i];
+            sumx2 = sumx2 + (line - i) * (line - i);
+        }
+
+    }
+    k = -(1.0*sumxy - 1.0*sumx*sumy / length) / (1.0*sumx2 - 1.0*sumx*sumx / length);
+    //k=my_arctan(k);
+    return k;
+}
+//两点连线，flag是标志位
+void  connect_line(int x1, int y1, int x2, int y2,int flag)
+{
+    float k, b; int x;
+    point line_point;
+    k = (y2 - y1)*1.0 / (x2 - x1);
+    b = y1 - k * x1;
+    for (x = my_min(x1,x2); x < my_max(x1, x2); x++)
+    {
+        line_point.x = x;
+        line_point.y = k * x + b;
+        IMG[line_point.x][line_point.y] = flag;
+    }
+}
+
+void connect_line_plan()
+{
+    //下边两点不是零
+
+    //determined_leftup_point
+    //determined_leftdown_point
+    //determined_rightup_point
+    //determined_rightdown_point
+
+    int take_points = 5;//最小二乘法考查点数
+    int star_position = 2; //最小二乘法起始点数，如 take_points = 5，star_position = 2;应该考察2——7点计算斜率k，对于下边的点适用
+    //左边两个点都存在
+    if ((determined_leftdown_point.x != 0) && (determined_leftup_point.x != 0))
+        connect_line(determined_leftdown_point.x, determined_leftdown_point.y, determined_leftup_point.x, determined_leftup_point.y,purple);
+    //左下点存在
+    if ((determined_leftdown_point.x != 0) && (determined_leftup_point.x == 0))
+    {
+        int line = 2; float y = 0; int y1 = 0;
+        float k = check_k(determined_leftdown_point.x+ star_position, left_line, take_points, 1);
+        y = (determined_leftdown_point.x - line)*k + determined_leftdown_point.y;
+        y1 = (int)y;
+        if ((y1 > 187) || (y1 < 0))
+        {
+            y1 = 187;
+            line = determined_leftdown_point.x - (y1 - determined_leftdown_point.y) / k;
+        }
+        connect_line(determined_leftdown_point.x, determined_leftdown_point.y, line, y1,purple);
+    }
+
+    //左上点存在
+    if ((determined_leftdown_point.x == 0) && (determined_leftup_point.x != 0))
+    {
+        int line = 115; float y = 0; int y1 = 0;
+        float k = check_k(determined_leftup_point.x, left_line, take_points, 0);
+        y = (determined_leftup_point.x- line)*k + determined_leftup_point.y;
+        y1 = (int)y;
+        if ((y1 > 187) || (y1 < 0))
+            y1 = 0;
+        connect_line(determined_leftup_point.x, determined_leftup_point.y, line, y1,purple);
+    }
+
+    //右边两个点存在
+    if ((determined_rightdown_point.x != 0) && (determined_rightup_point.x != 0))
+        connect_line(determined_rightdown_point.x, determined_rightdown_point.y, determined_rightup_point.x, determined_rightup_point.y, gray);
+
+    //右下点存在,右上点不存在
+    if ((determined_rightdown_point.x != 0) && (determined_rightup_point.x == 0))
+    {
+        int line = 2; float y = 0; int y1 = 0;
+        float k = check_k(determined_rightdown_point.x+ star_position, right_line, take_points, 1);
+        y = -(line- determined_rightdown_point.x)*k + determined_rightdown_point.y;
+        y1 = (int)y;
+        if ((y1 > 187) || (y1 < 0))
+            y1 = right_line[foresight];
+
+        connect_line(determined_rightdown_point.x, determined_rightdown_point.y, line, y1, gray);
+    }
+
+    //右上点存在
+    if ((determined_rightdown_point.x == 0) && (determined_rightup_point.x != 0))
+    {
+        int line = 115; float y = 0; int y1 = 0;
+        float k = check_k(determined_rightup_point.x, right_line, take_points, 0);
+        y = (line - determined_rightdown_point.x)*k + determined_rightdown_point.y;
+        y1 = (int)y;
+        if ((y1 > 187) || (y1 < 0))
+            y1 = 187;
+        connect_line(determined_rightup_point.x, determined_rightup_point.y, line, y1,gray);
+    }
+
+}
+void search_leftdown_point()
+{
+    determined_leftdown_point.x = 0;
+    determined_leftdown_point.y = 0;
+    int left_max = left_line[foresight];
+    for (int i = foresight; i < 115; i++)
+    {
+        if (left_line[i] >= left_max)
+        {
+            determined_leftdown_point.x = i;
+            determined_leftdown_point.y = left_line[i];
+            left_max = left_line[i];
+        }
+    }
+    if (determined_leftdown_point.x == 0 && determined_leftdown_point.y == 0)
+    {
+        determined_leftdown_point.x = 115;
+        determined_leftdown_point.y = left_line[115];
+    }
+
+    if (determined_leftdown_point.y < 2)
+    {
+        determined_leftdown_point.x = 115;
+        determined_leftdown_point.y = left_line[115];
+    }
+}
+void search_rightdown_point()
+{
+    determined_rightdown_point.x = 0;
+    determined_rightdown_point.y = 0;
+    int right_min = right_line[foresight];
+    for (int i = foresight; i < 115; i++)
+    {
+        if (right_line[i] <= right_min)
+        {
+            determined_rightdown_point.x = i;
+            determined_rightdown_point.y = right_line[i];
+            right_min = right_line[i];
+        }
+    }
+    if (determined_rightdown_point.x == 0 && determined_rightdown_point.y == 0)
+    {
+        determined_rightdown_point.x = 115;
+        determined_rightdown_point.y = right_line[115];
+    }
+
+    if (determined_rightdown_point.y < 2)
+    {
+        determined_rightdown_point.x = 115;
+        determined_rightdown_point.y = right_line[115];
+    }
+}
+void  search_leftup_point()
+{
+    determined_leftup_point.x = 0;
+    determined_leftup_point.y = 0;
+    for (int i = 5; i < foresight; i++)
+    {
+        if ((left_line[i] - left_line[i+2])>10&& (left_line[i-2]- left_line[i])<=4&& (left_line[i - 2]  -left_line[i])>=0)
+        {
+            determined_leftup_point.x = i;
+            determined_leftup_point.y = left_line[i];
+        }
+    }
+
+    if (determined_leftup_point.y >= determined_rightdown_point.y)
+    {
+        determined_leftup_point.x = 0;
+        determined_leftup_point.y = 0;
+    }
+}
+void search_rightup_point()
+{
+    determined_rightup_point.x = 0;
+    determined_rightup_point.y = 0;
+    for (int i = 5; i <foresight; i++)
+    {
+        if ((right_line[i] - right_line[i + 2]) < -10 && (right_line[i]- right_line[i-2])>=0&& (right_line[i] - right_line[i - 2]) <=4)
+        {
+            determined_rightup_point.x = i;
+            determined_rightup_point.y = right_line[i];
+        }
+
+        if (determined_rightup_point.y < determined_leftdown_point.y)
+        {
+            determined_rightup_point.x = 0;
+            determined_rightup_point.y = 0;
+        }
+
+
+    }
+
+}
+
 ////////////////////////////////////////////
 //功能：二值化
 //输入：灰度图片
@@ -60,7 +286,7 @@ void THRE()
         for (int j = 0; j < 188; j++)
         {
             if ((*map) > threshold)
-                (*my_map) = 255;
+                (*my_map) = 1;
             else (*my_map) = 0;
             map++;
             my_map++;
@@ -76,15 +302,35 @@ void THRE()
 ///////////////////////////////////////////
 void head_clear(void)
 {
-    uint8_t* my_map;
-    for (int i = 119; i >= 84; i--)
+    for (int i = 119; i >= 80; i--)
     {
-        my_map = &IMG[i][0];
-        for (int j = 40; j <= 135; j++)
+        for (int j = 90; j <= 100; j++)
         {
-            *(my_map+j) = 255;
+            IMG[i][j] = white;
         }
     }
+}
+
+//检测出赛道函数,11.14添加
+void ckeck_out_road(void)
+{
+    uint8_t* my_map;
+    int count = 0;//检测该范围黑点个数
+    for (int i = 115; i >= 80; i--)
+    {
+        my_map = &IMG[i][0];
+        for (int j = 60; j <= 110; j++)
+        {
+            if (*(my_map + j) ==0)
+            {
+                //*(my_map + j) = blue;
+                count++;
+            }
+        }
+    }
+    //if (count >= 1800)
+        //return count;
+    printf("%d\n", count);
 }
 
 ////////////////////////////////////////////
@@ -95,7 +341,8 @@ void head_clear(void)
 ///////////////////////////////////////////
 int find_f(int node)//返回的是父节点
 {
-    if (f[node] == node)return node;//找到最古老祖先，return
+    if (f[node] == node)
+        return node;//找到最古老祖先，return
     f[node] = find_f(f[node]);//向上寻找自己的父节点
     return f[node];
 }
@@ -413,24 +660,165 @@ void get_mid_line(void)
 ///////////////////////////////////////////
 void image_main()
 {
-    search_white_range();
-    find_all_connect();
-    find_road();
-    /*到此处为止，我们已经得到了属于赛道的结构体数组my_road[CAMERA_H]*/
-    ordinary_two_line();
-    get_mid_line();
+    //head_clear();//清车头
+    banmaxian();//斑马线识别
+    find_cross();//十字识别
+    draw_farway();//绘制前瞻
+
+    if (cross_flag == 0)
+    {
+        search_white_range();//找出所有白色范围
+        find_all_connect();//找到连通域
+        find_road();//找到赛道，得到了属于赛道的结构体数组my_road[CAMERA_H]*/
+        ordinary_two_line();//通常识别策略
+        get_mid_line();//合成中线
+    }
+
+
+
+    /*search_white_range();//找出所有白色范围
+    find_all_connect();//找到连通域
+    find_road();//找到赛道，得到了属于赛道的结构体数组my_road[CAMERA_H]
+    ordinary_two_line();//通常识别策略
+    get_mid_line();//合成中线*/
+
+    //十字的判断
+    if (cross_flag == 1)
+    {
+        search_white_range();//找出所有白色范围
+        find_all_connect();//找到连通域
+        find_road();//找到赛道，得到了属于赛道的结构体数组my_road[CAMERA_H]*/
+        ordinary_two_line();//通常识别策略
+        get_mid_line();//合成中线
+        search_leftdown_point();
+        search_rightdown_point();
+        search_leftup_point();
+        search_rightup_point();
+        connect_line_plan();
+        for (int i = 0; i < 119; i++)
+        {
+            for (int j = 0; j < 187; j++)
+            {
+                if (IMG[i][j] == purple)
+                    left_line[i] = j;
+                if (IMG[i][j] == gray)
+                    right_line[i] = j;
+            }
+        }
+        get_mid_line();
+    }
+
+    //get_mid_line();
+
+    printf("left_down:(%d,%d)\tleft_up:(%d,%d)\n", determined_leftdown_point.x, determined_leftdown_point.y, determined_leftup_point.x, determined_leftup_point.y);
+    printf("right_down:(%d,%d)\tright_up:(%d,%d)\n\n", determined_rightdown_point.x, determined_rightdown_point.y, determined_rightup_point.x, determined_rightup_point.y);
 
     for (int i = NEAR_LINE; i >= FAR_LINE; i--)
         if (mid_line[i] != MISS)
-            IMG[i][mid_line[i]] = 0;
+            IMG[i][mid_line[i]] = green;
+
 }
 
-float get_error(int num)
+
+////////////////////////////////////////////
+//功能:斑马线
+//输入：
+//输出：
+//备注:
+///////////////////////////////////////////
+
+void banmaxian()
 {
-    float a=94-mid_line[num];
-    return a;
+    if (my_road[55].white_num > 5)
+    {
+        banmaxian_flag = 1;
+
+        for (int j = 0;j < 5;j++)
+        {
+            for (int i = 0;i < 5;i++)
+            {
+                IMG[i][j] = green;
+            }
+        }
+    }
+
+    else
+    {
+        banmaxian_flag = 0;
+
+        for (int j = 0;j < 5;j++)
+        {
+            for (int i = 0;i < 5;i++)
+            {
+                IMG[i][j] = red;
+            }
+        }
+    }
 }
 
+////////////////////////////////////////////
+//功能:前瞻画线程序
+//输入：
+//输出：
+//备注:
+///////////////////////////////////////////
+
+void draw_farway()
+{
+    for (int j = 0; j < 187;j++)
+    {
+        IMG[40][j] = green;
+    }
+}
+
+////////////////////////////////////////////
+//功能:十字识别程序
+//输入：
+//输出：
+//备注:取i为55的时候，如果连通域的最大白条子的个数大于165，则认为识别到了十字
+///////////////////////////////////////////
 
 
+void find_cross()
+{
+    if (my_road[foresight].white_num == 1 &&
+        (      (my_road[foresight].connected[1].width) > 160
+            || (my_road[foresight - 2].connected[1].width) > 160
+            || (my_road[foresight - 4].connected[1].width) > 160
+            || (my_road[foresight - 6].connected[1].width) > 160
+            || (my_road[foresight - 8].connected[1].width) > 160
+            || (my_road[foresight + 2].connected[1].width) > 160
+            || (my_road[foresight + 4].connected[1].width) > 160
+            //|| (my_road[foresight + 6].connected[1].width) > 160
+            ))
+    {
+        cross_flag = 1;
 
+        for (int j = 183;j < 188;j++)
+        {
+            for (int i = 0;i < 5;i++)
+            {
+                IMG[i][j] = green;
+            }
+        }
+    }
+
+    else
+    {
+        cross_flag = 0;
+
+        for (int j = 183;j < 188;j++)
+        {
+            for (int i = 0;i < 5;i++)
+            {
+                IMG[i][j] = red;
+            }
+        }
+    }
+}
+float get_error(void)
+{
+    float erro;
+   erro = 94.0-mid_line[foresight];
+   return erro;
+}

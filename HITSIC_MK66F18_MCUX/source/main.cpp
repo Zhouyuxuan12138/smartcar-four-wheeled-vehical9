@@ -174,42 +174,41 @@ void main(void)
             }
                 break;
         }break;
-        case 0x01://摄像头跑车模式
+        case 0x01://百年校庆图标模式
         {
             MENU_Suspend();
-            CAM_ZF9V034_GetDefaultConfig(&cameraCfg);                                   //设置摄像头配置
-               CAM_ZF9V034_CfgWrite(&cameraCfg);                                   //写入配置
-               CAM_ZF9V034_GetReceiverConfig(&dmadvpCfg, &cameraCfg);    //生成对应接收器的配置数据，使用此数据初始化接受器并接收图像数据。
-               DMADVP_Init(DMADVP0, &dmadvpCfg);
-               DMADVP_TransferCreateHandle(&dmadvpHandle, DMADVP0,CAM_ZF9V034_DmaCallback);
-               uint8_t *imageBuffer0 = new uint8_t[DMADVP0->imgSize];
-               dispBuffer = new disp_ssd1306_frameBuffer_t;
-               //uint8_t *imageBuffer1 = new uint8_t[DMADVP0->imgSize];
-               DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer0);
-               //DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer1);
-           DMADVP_TransferStart(DMADVP0, &dmadvpHandle);
-               Motorsp_Init();//电机速度初始化
-        while(true)
-            {
-                prem_flag = mode_flag;
-                run_car(&dmadvpHandle,dispBuffer);
-                if(prem_flag != mode_flag) break;
-            }
-        delete imageBuffer0;
-        delete &dispBuffer;
-
+                              DISP_SSD1306_BufferUpload((uint8_t*) DISP_image_100thAnniversary);
+                          while(true)
+                           {
+                              prem_flag = mode_flag;
+                              SDK_DelayAtLeastUs(2000000,180*1000*1000);
+                              if(prem_flag != mode_flag) break;
+                            }
         }
         break;
-        case 0x02://百年校庆图标模式
+        case 0x02://摄像头跑车模式
                 {
                     MENU_Suspend();
-                    DISP_SSD1306_BufferUpload((uint8_t*) DISP_image_100thAnniversary);
-                while(true)
-                 {
-                    prem_flag = mode_flag;
-                    SDK_DelayAtLeastUs(2000000,180*1000*1000);
-                    if(prem_flag != mode_flag) break;
-                  }
+                    CAM_ZF9V034_GetDefaultConfig(&cameraCfg);                                   //设置摄像头配置
+                    CAM_ZF9V034_CfgWrite(&cameraCfg);                                   //写入配置
+                    CAM_ZF9V034_GetReceiverConfig(&dmadvpCfg, &cameraCfg);    //生成对应接收器的配置数据，使用此数据初始化接受器并接收图像数据。
+                    DMADVP_Init(DMADVP0, &dmadvpCfg);
+                    DMADVP_TransferCreateHandle(&dmadvpHandle, DMADVP0,CAM_ZF9V034_DmaCallback);
+                    uint8_t *imageBuffer0 = new uint8_t[DMADVP0->imgSize];
+                    dispBuffer = new disp_ssd1306_frameBuffer_t;
+                    //uint8_t *imageBuffer1 = new uint8_t[DMADVP0->imgSize];
+                    DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer0);
+                    //DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer1);
+                    DMADVP_TransferStart(DMADVP0, &dmadvpHandle);
+                      while(true)
+                      {
+                           prem_flag = mode_flag;
+                           run_car(&dmadvpHandle,dispBuffer);
+                           if(prem_flag != mode_flag) break;
+
+                      }
+                           delete imageBuffer0;
+                           delete &dispBuffer;
                 }
                     break;
         case 0x03://电磁跑车模式
@@ -254,10 +253,12 @@ void CAM_ZF9V034_DmaCallback(edma_handle_t *handle, void *userData, bool transfe
 void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffer)
 {
     while (kStatus_Success != DMADVP_TransferGetFullBuffer(DMADVP0, dmadvpHandle,&fullBuffer));
-                     THRE();
+                     Motorsp_Init();//电机速度初始化
+                     //THRE();
                      //head_clear();
                      image_main();
                      servo_pid();
+                     Motor_pid();
                              dispBuffer->Clear();
                              const uint8_t imageTH = 120;
                              for (int i = 0; i < cameraCfg.imageRow; i += 2)

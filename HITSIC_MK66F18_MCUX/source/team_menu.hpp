@@ -90,7 +90,7 @@ void our_menu_test(menu_list_t *menu)
                      MENU_ItemConstruct(varfType, &(c_data[0].servo_pwm), "servo_pwm", 1, menuItem_data_region));
         MENU_ListInsert(TestList, MENU_ItemConstruct(nullType, NULL, "camerapar", 0, 0));
         MENU_ListInsert(TestList,
-                       MENU_ItemConstruct(variType, &(c_data[0].foresight), "foresight",13, menuItem_data_global));
+                       MENU_ItemConstruct(variType, &(foresight), "foresight",13, menuItem_data_global));
         MENU_ListInsert(TestList,
                        MENU_ItemConstruct(variType, &(threshold), "threshold",14, menuItem_data_global));
         MENU_ListInsert(TestList, MENU_ItemConstruct(nullType, NULL, "elec", 0, 0));

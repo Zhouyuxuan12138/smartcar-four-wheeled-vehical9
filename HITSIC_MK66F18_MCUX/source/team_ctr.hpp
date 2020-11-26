@@ -18,7 +18,6 @@ typedef struct _cardata{
     float Kd = 0.012;                //定义舵机微分系数
     float M_Kp = 0.020;              //定义电机比例系数
     float M_Ki = 0.010;              //定义电机积分系数
-    int foresight = 100;//定义前瞻，摄像头以多远为标准
 }cardata;
 
 extern cardata c_data[2];//车数据数组
