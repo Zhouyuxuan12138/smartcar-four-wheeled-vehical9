@@ -186,7 +186,7 @@ void main(void)
                             }
         }
         break;
-        case 0x02://摄像头跑车模式
+        /*case 0x02://摄像头跑车模式
                 {
                     MENU_Suspend();
                     CAM_ZF9V034_GetDefaultConfig(&cameraCfg);                                   //设置摄像头配置
@@ -210,7 +210,7 @@ void main(void)
                            delete imageBuffer0;
                            delete &dispBuffer;
                 }
-                    break;
+                    break;*/
         case 0x03://电磁跑车模式
                 {
                     MENU_Suspend();//延迟发车
@@ -227,6 +227,33 @@ void main(void)
                 }
                 delay_runcar = 0;
                     break;
+        case 0x08://摄像头跑车模式
+        {
+            MENU_Suspend();
+                               CAM_ZF9V034_GetDefaultConfig(&cameraCfg);                                   //设置摄像头配置
+                               CAM_ZF9V034_CfgWrite(&cameraCfg);                                   //写入配置
+                               CAM_ZF9V034_GetReceiverConfig(&dmadvpCfg, &cameraCfg);    //生成对应接收器的配置数据，使用此数据初始化接受器并接收图像数据。
+                               DMADVP_Init(DMADVP0, &dmadvpCfg);
+                               DMADVP_TransferCreateHandle(&dmadvpHandle, DMADVP0,CAM_ZF9V034_DmaCallback);
+                               uint8_t *imageBuffer0 = new uint8_t[DMADVP0->imgSize];
+                               dispBuffer = new disp_ssd1306_frameBuffer_t;
+                               //uint8_t *imageBuffer1 = new uint8_t[DMADVP0->imgSize];
+                               DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer0);
+                               //DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer1);
+                               DMADVP_TransferStart(DMADVP0, &dmadvpHandle);
+                                 while(true)
+                                 {
+                                      prem_flag = mode_flag;
+                                      run_car(&dmadvpHandle,dispBuffer);
+                                      if(prem_flag != mode_flag) break;
+
+                                 }
+                                      delete imageBuffer0;
+                                      delete &dispBuffer;
+
+
+
+        }break;
         default: break;//其他模式，待定
         }
         //TODO: 在这里添加车模保护代码

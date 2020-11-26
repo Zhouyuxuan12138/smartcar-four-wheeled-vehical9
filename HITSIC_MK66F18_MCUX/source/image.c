@@ -76,7 +76,7 @@ void THRE()
         for (int j = 0; j < 188; j++)
         {
             if ((*map) > threshold)
-                (*my_map) = 255;
+                (*my_map) = 1;
             else (*my_map) = 0;
             map++;
             my_map++;
@@ -491,12 +491,9 @@ void image_main()
 
     //get_mid_line();
 
-    printf("left_down:(%d,%d)\tleft_up:(%d,%d)\n", determined_leftdown_point.x, determined_leftdown_point.y, determined_leftup_point.x, determined_leftup_point.y);
-    printf("right_down:(%d,%d)\tright_up:(%d,%d)\n\n", determined_rightdown_point.x, determined_rightdown_point.y, determined_rightup_point.x, determined_rightup_point.y);
-
-    for (int i = NEAR_LINE; i >= FAR_LINE; i--)
+    /*for (int i = NEAR_LINE; i >= FAR_LINE; i--)
         if (mid_line[i] != MISS)
-            IMG[i][mid_line[i]] = green;
+            IMG[i][mid_line[i]] = green;*/
 
 }
 
@@ -573,11 +570,11 @@ void connect_line_plan()
         float k = check_k(determined_leftdown_point.x+ star_position, left_line, take_points, 1);
         y = (determined_leftdown_point.x - line)*k + determined_leftdown_point.y;
         y1 = (int)y;
-        if ((y1 > 187) || (y1 < 0))
+        /*if ((y1 > 187) || (y1 < 0))
         {
             y1 = 187;
             line = determined_leftdown_point.x - (y1 - determined_leftdown_point.y) / k;
-        }
+        }*/
         connect_line(determined_leftdown_point.x, determined_leftdown_point.y, line, y1,purple);
     }
 
@@ -588,8 +585,8 @@ void connect_line_plan()
         float k = check_k(determined_leftup_point.x, left_line, take_points, 0);
         y = (determined_leftup_point.x- line)*k + determined_leftup_point.y;
         y1 = (int)y;
-        if ((y1 > 187) || (y1 < 0))
-            y1 = 0;
+        /*if ((y1 > 187) || (y1 < 0))
+            y1 = 0;*/
         connect_line(determined_leftup_point.x, determined_leftup_point.y, line, y1,purple);
     }
 
@@ -604,8 +601,8 @@ void connect_line_plan()
         float k = check_k(determined_rightdown_point.x+ star_position, right_line, take_points, 1);
         y = -(line- determined_rightdown_point.x)*k + determined_rightdown_point.y;
         y1 = (int)y;
-        if ((y1 > 187) || (y1 < 0))
-            y1 = right_line[foresight];
+        /*if ((y1 > 187) || (y1 < 0))
+            y1 = right_line[foresight];*/
 
         connect_line(determined_rightdown_point.x, determined_rightdown_point.y, line, y1, gray);
     }
@@ -617,8 +614,8 @@ void connect_line_plan()
         float k = check_k(determined_rightup_point.x, right_line, take_points, 0);
         y = (line - determined_rightdown_point.x)*k + determined_rightdown_point.y;
         y1 = (int)y;
-        if ((y1 > 187) || (y1 < 0))
-            y1 = 187;
+        /*if ((y1 > 187) || (y1 < 0))
+            y1 = 187;*/
         connect_line(determined_rightup_point.x, determined_rightup_point.y, line, y1,gray);
     }
 

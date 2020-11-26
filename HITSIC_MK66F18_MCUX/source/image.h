@@ -25,13 +25,13 @@
 #define white_num_MAX 10//每行最多允许白条数
 
 /////////////////////////////
-#define black 0
-#define white 1
-#define blue  2
-#define green 3
-#define red   4
-#define gray  5
-#define purple 6
+#define black 0x00
+#define white 0x01
+#define blue  0x02
+#define green 0x03
+#define red   0x04
+#define gray  0x05
+#define purple 0x06
 ///////////////////////////
 
 extern uint8_t IMG[CAMERA_H][CAMERA_W];//二值化后图像数组
