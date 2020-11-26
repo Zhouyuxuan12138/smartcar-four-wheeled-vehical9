@@ -254,7 +254,7 @@ void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffe
 {
     while (kStatus_Success != DMADVP_TransferGetFullBuffer(DMADVP0, dmadvpHandle,&fullBuffer));
                      Motorsp_Init();//电机速度初始化
-                     //THRE();
+                     THRE();
                      //head_clear();
                      image_main();
                      servo_pid();
