@@ -167,10 +167,9 @@ void main(void)
 
             while(true)
              {
+                prem_flag = mode_flag;
                 Motorsp_Init();
                 prem_flag = mode_flag;
-                Motor_pid();
-                Get_erro();//电磁用
                 if(prem_flag != mode_flag) break;
               }
             }
