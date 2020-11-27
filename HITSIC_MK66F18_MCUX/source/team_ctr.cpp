@@ -30,11 +30,15 @@ void Motor_ctr(void)//电机控制闭环
     mot_right = -SCFTM_GetSpeed(FTM2);
     SCFTM_ClearSpeed(FTM2);
     //Motor_pid();
+    /*限幅代码*/
     float *p;
     if(M_left_pwm>35.0) {p = &M_left_pwm;*p = 35.0;}
     else if(M_left_pwm<-35.0) {p = &M_left_pwm;*p = -35.0;}
+    else p = NULL;
     if(M_right_pwm>35.0) {p = &M_right_pwm;*p = 35.0;}
     else if(M_right_pwm<-35.0) {p = &M_right_pwm;*p = -35.0;}
+    else p = NULL;
+    /*限幅代码*/
     /*if((ADC[1]<=40&&ADC[7]<=40)||delay_runcar==0)
     {
     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_0, 20000U, 0U);//右轮正转kFTM_Chnl_0> kFTM_Chnl_1
@@ -43,7 +47,7 @@ void Motor_ctr(void)//电机控制闭环
     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_3, 20000U, 0U);//左轮正转kFTM_Chnl_3> kFTM_Chnl_2
     }
     else*/
-    if(M_right_pwm>=0)
+    if(M_right_pwm>=0.001)
     {
     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_1, 20000U,M_right_pwm);//右轮正转kFTM_Chnl_0> kFTM_Chnl_1
     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_0, 20000U, 0U);
@@ -53,7 +57,7 @@ void Motor_ctr(void)//电机控制闭环
      SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_1, 20000U, 0U);//右轮反转kFTM_Chnl_0> kFTM_Chnl_1
      SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_0, 20000U, -M_right_pwm);
     }
-    if(M_left_pwm>=0)
+    if(M_left_pwm>=0.001)
     {
     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_3, 20000U, 0U);
     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_2, 20000U, M_left_pwm);//左轮正转kFTM_Chnl_3> kFTM_Chnl_2
@@ -79,6 +83,10 @@ void servo_pid()
     pwm_error = c_data[0].Kp*error_n+c_data[0].Kd*(error_n-error_n_1);
     c_data[0].servo_pwm=c_data[0].servo_mid+pwm_error;
     error_n_1 = error_n;
+    if(c_data[0].servo_pwm<6.8)
+            c_data[0].servo_pwm=6.8;
+    else if(c_data[0].servo_pwm>8.2)
+            c_data[0].servo_pwm=8.2;
 }
 
 void servo()
@@ -118,5 +126,22 @@ void Motor_pid()
     *p_erro = *p_drs-(float)mot_right;//右电机偏差
     *p_pwm += c_data[0].M_Kp*((*p_erro)-(*p_errolast))+c_data[0].M_Ki*(*p_erro);//右电机增量式
     *p_errolast = *p_erro;//记录上一次偏差右
+    /*限幅代码*/
+    float *p;
+    if(M_left_pwm>35.0) {p = &M_left_pwm;*p = 35.0;}
+    else if(M_left_pwm<-35.0) {p = &M_left_pwm;*p = -35.0;}
+    else p = NULL;
+    if(M_right_pwm>35.0) {p = &M_right_pwm;*p = 35.0;}
+    else if(M_right_pwm<-35.0) {p = &M_right_pwm;*p = -35.0;}
+    else p = NULL;
+    /*限幅代码*/
+}
+void Motorsp_Set(float x,float y)
+{
+    float *p;
+    p = &M_left_drs;
+    *p = x;
+    p = &M_right_drs;
+    *p = y;
 
 }

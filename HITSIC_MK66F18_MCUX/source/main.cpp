@@ -164,10 +164,12 @@ void main(void)
         case 0x00: {
             {
                 MENU_Resume();
+
             while(true)
              {
                 Motorsp_Init();
                 prem_flag = mode_flag;
+                Motor_pid();
                 Get_erro();//电磁用
                 if(prem_flag != mode_flag) break;
               }
@@ -230,26 +232,27 @@ void main(void)
         case 0x08://摄像头跑车模式
         {
             MENU_Suspend();
-                               CAM_ZF9V034_GetDefaultConfig(&cameraCfg);                                   //设置摄像头配置
-                               CAM_ZF9V034_CfgWrite(&cameraCfg);                                   //写入配置
-                               CAM_ZF9V034_GetReceiverConfig(&dmadvpCfg, &cameraCfg);    //生成对应接收器的配置数据，使用此数据初始化接受器并接收图像数据。
-                               DMADVP_Init(DMADVP0, &dmadvpCfg);
-                               DMADVP_TransferCreateHandle(&dmadvpHandle, DMADVP0,CAM_ZF9V034_DmaCallback);
-                               uint8_t *imageBuffer0 = new uint8_t[DMADVP0->imgSize];
-                               dispBuffer = new disp_ssd1306_frameBuffer_t;
-                               //uint8_t *imageBuffer1 = new uint8_t[DMADVP0->imgSize];
-                               DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer0);
-                               //DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer1);
-                               DMADVP_TransferStart(DMADVP0, &dmadvpHandle);
-                                 while(true)
-                                 {
-                                      prem_flag = mode_flag;
-                                      run_car(&dmadvpHandle,dispBuffer);
-                                      if(prem_flag != mode_flag) break;
+            CAM_ZF9V034_GetDefaultConfig(&cameraCfg);                                   //设置摄像头配置
+            CAM_ZF9V034_CfgWrite(&cameraCfg);                                   //写入配置
+            CAM_ZF9V034_GetReceiverConfig(&dmadvpCfg, &cameraCfg);    //生成对应接收器的配置数据，使用此数据初始化接受器并接收图像数据。
+            DMADVP_Init(DMADVP0, &dmadvpCfg);
+            DMADVP_TransferCreateHandle(&dmadvpHandle, DMADVP0,CAM_ZF9V034_DmaCallback);
+            uint8_t *imageBuffer0 = new uint8_t[DMADVP0->imgSize];
+            dispBuffer = new disp_ssd1306_frameBuffer_t;
+            //uint8_t *imageBuffer1 = new uint8_t[DMADVP0->imgSize];
+             DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer0);
+             //DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer1);
+             DMADVP_TransferStart(DMADVP0, &dmadvpHandle);
+             Motorsp_Init();//电机速度初始化
+             while(true)
+               {
+               prem_flag = mode_flag;
+               run_car(&dmadvpHandle,dispBuffer);
+               if(prem_flag != mode_flag) break;
 
-                                 }
-                                      delete imageBuffer0;
-                                      delete &dispBuffer;
+               }
+              delete imageBuffer0;
+              delete &dispBuffer;
 
 
 
@@ -279,13 +282,12 @@ void CAM_ZF9V034_DmaCallback(edma_handle_t *handle, void *userData, bool transfe
 }
 void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffer)
 {
+    if(banmaxian_flag == 1) Motorsp_Set(0.0,0.0);
+    Motor_pid();
     while (kStatus_Success != DMADVP_TransferGetFullBuffer(DMADVP0, dmadvpHandle,&fullBuffer));
-                     Motorsp_Init();//电机速度初始化
                      THRE();
-                     //head_clear();
                      image_main();
                      servo_pid();
-                     Motor_pid();
                              dispBuffer->Clear();
                              const uint8_t imageTH = 120;
                              for (int i = 0; i < cameraCfg.imageRow; i += 2)

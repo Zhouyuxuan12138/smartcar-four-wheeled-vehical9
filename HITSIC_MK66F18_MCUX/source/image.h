@@ -39,6 +39,7 @@ extern uint8_t image_Buffer_0[CAMERA_H][CAMERA_W];
 extern uint8_t* fullBuffer;//指向灰度图的首地址
 extern int threshold;
 extern int foresight;
+extern uint8_t banmaxian_flag;
 void head_clear(void);
 void THRE(void);
 int find_f(int a);

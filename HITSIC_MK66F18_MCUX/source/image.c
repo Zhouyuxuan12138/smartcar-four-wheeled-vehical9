@@ -76,7 +76,7 @@ void THRE()
         for (int j = 0; j < 188; j++)
         {
             if ((*map) > threshold)
-                (*my_map) = 1;
+                (*my_map) = 255;
             else (*my_map) = 0;
             map++;
             my_map++;
@@ -476,7 +476,7 @@ void image_main()
         search_leftup_point();
         search_rightup_point();
         connect_line_plan();
-        for (int i = 0; i < 119; i++)
+        /*for (int i = 0; i < 119; i++)
         {
             for (int j = 0; j < 187; j++)
             {
@@ -485,22 +485,22 @@ void image_main()
                 if (IMG[i][j] == gray)
                     right_line[i] = j;
             }
-        }
+        }*/
         get_mid_line();
     }
 
     //get_mid_line();
 
-    /*for (int i = NEAR_LINE; i >= FAR_LINE; i--)
+    for (int i = NEAR_LINE; i >= FAR_LINE; i--)
         if (mid_line[i] != MISS)
-            IMG[i][mid_line[i]] = green;*/
+            IMG[i][mid_line[i]] = green;
 
 }
 
 
 float get_error(void)
 {
-    float a=94-mid_line[foresight];
+    float a=140-mid_line[foresight];
     return a;
 }
 
@@ -535,7 +535,7 @@ float check_k(int line, uint8_t* array, int length, int flag)
     return k;
 }
 //两点连线，flag是标志位
-void  connect_line(int x1, int y1, int x2, int y2,int flag)
+void  connect_line(int x1, int y1, int x2, int y2,uint8_t array[120])
 {
     float k, b; int x;
     point line_point;
@@ -545,7 +545,8 @@ void  connect_line(int x1, int y1, int x2, int y2,int flag)
     {
         line_point.x = x;
         line_point.y = k * x + b;
-        IMG[line_point.x][line_point.y] = flag;
+        //IMG[line_point.x][line_point.y] = flag;
+        array[line_point.x] = line_point.y;
     }
 }
 
@@ -561,8 +562,8 @@ void connect_line_plan()
     int take_points = 5;//最小二乘法考查点数
     int star_position = 2; //最小二乘法起始点数，如 take_points = 5，star_position = 2;应该考察2——7点计算斜率k，对于下边的点适用
     //左边两个点都存在
-    if ((determined_leftdown_point.x != 0) && (determined_leftup_point.x != 0))
-        connect_line(determined_leftdown_point.x, determined_leftdown_point.y, determined_leftup_point.x, determined_leftup_point.y,purple);
+    /*if ((determined_leftdown_point.x != 0) && (determined_leftup_point.x != 0))
+        connect_line(determined_leftdown_point.x, determined_leftdown_point.y, determined_leftup_point.x, determined_leftup_point.y,left_line);
     //左下点存在
     if ((determined_leftdown_point.x != 0) && (determined_leftup_point.x == 0))
     {
@@ -574,9 +575,9 @@ void connect_line_plan()
         {
             y1 = 187;
             line = determined_leftdown_point.x - (y1 - determined_leftdown_point.y) / k;
-        }*/
-        connect_line(determined_leftdown_point.x, determined_leftdown_point.y, line, y1,purple);
-    }
+        }
+        connect_line(determined_leftdown_point.x, determined_leftdown_point.y, line, y1,left_line);
+    }*/
 
     //左上点存在
     if ((determined_leftdown_point.x == 0) && (determined_leftup_point.x != 0))
@@ -587,12 +588,12 @@ void connect_line_plan()
         y1 = (int)y;
         /*if ((y1 > 187) || (y1 < 0))
             y1 = 0;*/
-        connect_line(determined_leftup_point.x, determined_leftup_point.y, line, y1,purple);
+        connect_line(determined_leftup_point.x, determined_leftup_point.y, line, y1,left_line);
     }
 
     //右边两个点存在
-    if ((determined_rightdown_point.x != 0) && (determined_rightup_point.x != 0))
-        connect_line(determined_rightdown_point.x, determined_rightdown_point.y, determined_rightup_point.x, determined_rightup_point.y, gray);
+    /*if ((determined_rightdown_point.x != 0) && (determined_rightup_point.x != 0))
+        connect_line(determined_rightdown_point.x, determined_rightdown_point.y, determined_rightup_point.x, determined_rightup_point.y, right_line);
 
     //右下点存在,右上点不存在
     if ((determined_rightdown_point.x != 0) && (determined_rightup_point.x == 0))
@@ -602,10 +603,10 @@ void connect_line_plan()
         y = -(line- determined_rightdown_point.x)*k + determined_rightdown_point.y;
         y1 = (int)y;
         /*if ((y1 > 187) || (y1 < 0))
-            y1 = right_line[foresight];*/
+            y1 = right_line[foresight];
 
-        connect_line(determined_rightdown_point.x, determined_rightdown_point.y, line, y1, gray);
-    }
+        connect_line(determined_rightdown_point.x, determined_rightdown_point.y, line, y1, right_line);
+    }*/
 
     //右上点存在
     if ((determined_rightdown_point.x == 0) && (determined_rightup_point.x != 0))
@@ -616,7 +617,7 @@ void connect_line_plan()
         y1 = (int)y;
         /*if ((y1 > 187) || (y1 < 0))
             y1 = 187;*/
-        connect_line(determined_rightup_point.x, determined_rightup_point.y, line, y1,gray);
+        connect_line(determined_rightup_point.x, determined_rightup_point.y, line, y1,right_line);
     }
 
 }
@@ -718,6 +719,7 @@ void find_cross()
 {
     if (my_road[foresight].white_num == 1 &&
         (      (my_road[foresight].connected[1].width) > 160
+
             //|| (my_road[foresight + 6].connected[1].width) > 160
             ))
     {
@@ -733,15 +735,18 @@ void find_cross()
 
 void banmaxian()
 {
-    if (my_road[55].white_num > 5)
+    if ((my_road[foresight].white_num > 4)
+            || (my_road[foresight - 2].white_num) > 4
+                        || (my_road[foresight - 4].white_num) > 4
+                        || (my_road[foresight - 6].white_num) > 4
+                        || (my_road[foresight - 8].white_num) > 4
+                        || (my_road[foresight + 2].white_num) > 4
+                        || (my_road[foresight + 4].white_num) > 4
+)
     {
         banmaxian_flag = 1;
     }
 
-    else
-    {
-        banmaxian_flag = 0;
-    }
 }
 
 
