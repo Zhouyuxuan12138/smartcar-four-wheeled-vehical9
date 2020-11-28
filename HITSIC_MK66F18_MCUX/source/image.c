@@ -500,7 +500,7 @@ void image_main()
 
 float get_error(void)
 {
-    float a=140-mid_line[foresight];
+    float a=94-mid_line[foresight];
     return a;
 }
 

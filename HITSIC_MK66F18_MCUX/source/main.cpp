@@ -263,7 +263,7 @@ void main(void)
 
 void MENU_DataSetUp(void)
 {
-    MENU_ListInsert(menu_menuRoot, MENU_ItemConstruct(nullType, NULL, "EXAMPLE", 0, 0));
+    MENU_ListInsert(menu_menuRoot, MENU_ItemConstruct(nullType, NULL, "9th_Team", 0, 0));
     our_menu_test(menu_menuRoot);
 
 
