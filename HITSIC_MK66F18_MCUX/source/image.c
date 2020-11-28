@@ -580,7 +580,7 @@ void connect_line_plan()
     }*/
 
     //左上点存在
-    if ((determined_leftdown_point.x == 0) && (determined_leftup_point.x != 0))
+    if ((determined_leftup_point.x != 0))
     {
         int line = 115; float y = 0; int y1 = 0;
         float k = check_k(determined_leftup_point.x, left_line, take_points, 0);
@@ -594,9 +594,9 @@ void connect_line_plan()
     //右边两个点存在
     /*if ((determined_rightdown_point.x != 0) && (determined_rightup_point.x != 0))
         connect_line(determined_rightdown_point.x, determined_rightdown_point.y, determined_rightup_point.x, determined_rightup_point.y, right_line);
-
+*/
     //右下点存在,右上点不存在
-    if ((determined_rightdown_point.x != 0) && (determined_rightup_point.x == 0))
+    /*if ((determined_rightdown_point.x != 0) && (determined_rightup_point.x == 0))
     {
         int line = 2; float y = 0; int y1 = 0;
         float k = check_k(determined_rightdown_point.x+ star_position, right_line, take_points, 1);
@@ -609,9 +609,9 @@ void connect_line_plan()
     }*/
 
     //右上点存在
-    if ((determined_rightdown_point.x == 0) && (determined_rightup_point.x != 0))
+    if ((determined_rightup_point.x != 0))
     {
-        int line = 115; float y = 0; int y1 = 0;
+        int line = 115; float y = 187; int y1 = 187;
         float k = check_k(determined_rightup_point.x, right_line, take_points, 0);
         y = (line - determined_rightdown_point.x)*k + determined_rightdown_point.y;
         y1 = (int)y;
@@ -686,30 +686,30 @@ void  search_leftup_point()
         }
     }
 
-    if (determined_leftup_point.y >= determined_rightdown_point.y)
+    /*if (determined_leftup_point.y >= determined_rightdown_point.y)
     {
         determined_leftup_point.x = 0;
         determined_leftup_point.y = 0;
-    }
+    }*/
 }
 void search_rightup_point()
 {
     determined_rightup_point.x = 0;
     determined_rightup_point.y = 0;
-    for (int i = 5; i <foresight; i++)
+    for (int i = 5; i <60; i++)
     {
-        if ((right_line[i] - right_line[i + 2]) < -10 && (right_line[i]- right_line[i-2])>=0&& (right_line[i] - right_line[i - 2]) <=4)
+        if (((right_line[i] - right_line[i + 2]) < -10) && ((right_line[i]- right_line[i-2])>=0)&& (right_line[i] - right_line[i - 2]) <=4)
         {
             determined_rightup_point.x = i;
             determined_rightup_point.y = right_line[i];
         }
 
-        if (determined_rightup_point.y < determined_leftdown_point.y)
+       /* if (determined_rightup_point.y < determined_leftup_point.y)
         {
             determined_rightup_point.x = 0;
             determined_rightup_point.y = 0;
         }
-
+*/
 
     }
 

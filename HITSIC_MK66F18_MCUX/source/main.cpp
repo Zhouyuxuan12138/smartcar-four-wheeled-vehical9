@@ -150,7 +150,9 @@ void main(void)
     //MENU_Resume();
     /** 控制环初始化 */
     //TODO: 在这里初始化控制环
-
+    /*初始化标志位*/
+        delay_runcar = 0;//延迟发车标志位
+        banmaxian_flag = 0;//斑马线识别标志位
 
     /** 初始化结束，开启总中断 */
     HAL_ExitCritical();
@@ -161,10 +163,10 @@ void main(void)
     {
         switch(mode_flag)//菜单模式
         {
-        case 0x00: {
+        case 0x08: {
 
                 MENU_Resume();
-
+                delay_runcar = 1;
             while(true)
              {
                 prem_flag = mode_flag;
@@ -212,10 +214,10 @@ void main(void)
                     break;*/
         case 0x03://电磁跑车模式
                 {
-                    MENU_Suspend();//延迟发车
+                    MENU_Suspend();
                     DISP_SSD1306_Fill(0);
                     SDK_DelayAtLeastUs(5000000,180*1000*1000);
-                    delay_runcar = 1;
+                    delay_runcar = 0;//延迟发车标志位
                 while(true)
                  {
                     prem_flag = mode_flag;
@@ -223,10 +225,9 @@ void main(void)
                     DISP_SSD1306_Printf_F6x8(30,5,"%c","elecmode");
                     if(prem_flag != mode_flag) break;
                   }
-                delay_runcar = 0;
                 }
                     break;
-        case 0x08://摄像头跑车模式
+        case 0x00://摄像头跑车模式
         {
             MENU_Suspend();
             CAM_ZF9V034_GetDefaultConfig(&cameraCfg);                                   //设置摄像头配置
@@ -241,6 +242,9 @@ void main(void)
              //DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer1);
              DMADVP_TransferStart(DMADVP0, &dmadvpHandle);
              Motorsp_Init();//电机速度初始化
+             delay_runcar = 0;
+             SDK_DelayAtLeastUs(5000000,180*1000*1000);
+             delay_runcar = 1;//延时发车
              while(true)
                {
                prem_flag = mode_flag;
@@ -250,8 +254,7 @@ void main(void)
                }
               delete imageBuffer0;
               delete &dispBuffer;
-
-
+              banmaxian_flag = 0;//斑马线识别标志位
 
         }break;
         default: break;//其他模式，待定
