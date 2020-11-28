@@ -167,9 +167,8 @@ void main(void)
 
             while(true)
              {
-                Motorsp_Init();
                 prem_flag = mode_flag;
-                Motor_pid();
+                Motorsp_Init();
                 if(prem_flag != mode_flag) break;
               }
             }
@@ -280,8 +279,6 @@ void CAM_ZF9V034_DmaCallback(edma_handle_t *handle, void *userData, bool transfe
 }
 void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffer)
 {
-    if(banmaxian_flag == 1) {Motorsp_Set(0.0,0.0); Motor_pid();}
-    else Motor_pid();
     while (kStatus_Success != DMADVP_TransferGetFullBuffer(DMADVP0, dmadvpHandle,&fullBuffer));
                      THRE();
                      image_main();

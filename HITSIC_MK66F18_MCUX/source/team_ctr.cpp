@@ -29,7 +29,9 @@ void Motor_ctr(void)//电机控制闭环
     SCFTM_ClearSpeed(FTM1);
     mot_right = -SCFTM_GetSpeed(FTM2);
     SCFTM_ClearSpeed(FTM2);
-    //Motor_pid();
+    //if(banmaxian_flag == 1) {Motorsp_Set(0.0,0.0); Motor_pid();}
+    //else
+    Motor_pid();
     /*限幅代码*/
     float *p;
     if(M_left_pwm>35.0) {p = &M_left_pwm;*p = 35.0;}
@@ -47,24 +49,24 @@ void Motor_ctr(void)//电机控制闭环
     else*/
     if(M_right_pwm>0)
     {
-    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_3, 20000U,M_right_pwm);//右轮正转kFTM_Chnl_0> kFTM_Chnl_1
-    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_2, 20000U, 0U);
+    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_1, 20000U,M_right_pwm);//右轮正转kFTM_Chnl_0> kFTM_Chnl_1
+    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_0, 20000U, 0U);
     }
     else
     {
-     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_2, 20000U, 0U);//右轮反转kFTM_Chnl_0> kFTM_Chnl_1
-     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_3, 20000U, -M_right_pwm);
+     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_1, 20000U, 0U);//右轮反转kFTM_Chnl_0> kFTM_Chnl_1
+     SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_0, 20000U, -M_right_pwm);
     }
-    /*if(M_left_pwm>0)
+    if(M_left_pwm>0)
     {
-    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_2, 20000U, 0U);
-    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_3, 20000U, M_left_pwm);//左轮正转kFTM_Chnl_3> kFTM_Chnl_2
+    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_3, 20000U, 0U);
+    SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_2, 20000U, M_left_pwm);//左轮正转kFTM_Chnl_3> kFTM_Chnl_2
     }
     else
     {
         SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_3, 20000U, -M_left_pwm);
         SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_2, 20000U, 0U);//左轮反转kFTM_Chnl_3> kFTM_Chnl_2
-    }*/
+    }
 }
 void servo_init(float *pwm)
 {
@@ -89,6 +91,7 @@ void servo_pid()
 
 void servo()
 {
+    //servo_pid();
     if(c_data[0].servo_pwm<6.8)
             c_data[0].servo_pwm=6.8;
     else if(c_data[0].servo_pwm>8.2)
