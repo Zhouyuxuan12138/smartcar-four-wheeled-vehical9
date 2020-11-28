@@ -162,19 +162,18 @@ void main(void)
         switch(mode_flag)//菜单模式
         {
         case 0x00: {
-            {
+
                 MENU_Resume();
 
             while(true)
              {
-                prem_flag = mode_flag;
                 Motorsp_Init();
                 prem_flag = mode_flag;
+                Motor_pid();
                 if(prem_flag != mode_flag) break;
               }
             }
                 break;
-        }break;
         case 0x01://百年校庆图标模式
         {
             MENU_Suspend();
@@ -225,8 +224,8 @@ void main(void)
                     DISP_SSD1306_Printf_F6x8(30,5,"%c","elecmode");
                     if(prem_flag != mode_flag) break;
                   }
-                }
                 delay_runcar = 0;
+                }
                     break;
         case 0x08://摄像头跑车模式
         {
@@ -281,8 +280,8 @@ void CAM_ZF9V034_DmaCallback(edma_handle_t *handle, void *userData, bool transfe
 }
 void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffer)
 {
-    if(banmaxian_flag == 1) Motorsp_Set(0.0,0.0);
-    Motor_pid();
+    if(banmaxian_flag == 1) {Motorsp_Set(0.0,0.0); Motor_pid();}
+    else Motor_pid();
     while (kStatus_Success != DMADVP_TransferGetFullBuffer(DMADVP0, dmadvpHandle,&fullBuffer));
                      THRE();
                      image_main();

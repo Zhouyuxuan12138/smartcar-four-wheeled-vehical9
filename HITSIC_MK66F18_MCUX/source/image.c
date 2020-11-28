@@ -432,7 +432,7 @@ void get_mid_line(void)
     search_white_range();
     find_all_connect();
     find_road();
-    /*到此处为止，我们已经得到了属于赛道的结构体数组my_road[CAMERA_H]
+    //到此处为止，我们已经得到了属于赛道的结构体数组my_road[CAMERA_H]
     ordinary_two_line();
     get_mid_line();
 
