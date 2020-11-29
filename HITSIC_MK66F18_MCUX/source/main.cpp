@@ -166,7 +166,7 @@ void main(void)
         case 0x00: {
 
                 MENU_Resume();
-                delay_runcar = 1;
+                delay_runcar = 0;
             while(true)
              {
                 prem_flag = mode_flag;

@@ -741,13 +741,13 @@ void find_cross()
 
 void banmaxian()
 {
-    if ((my_road[foresight].white_num > 4)
-            || (my_road[foresight - 2].white_num) > 4
-                        || (my_road[foresight - 4].white_num) > 4
-                        || (my_road[foresight - 6].white_num) > 4
-                        || (my_road[foresight - 8].white_num) > 4
-                        || (my_road[foresight + 2].white_num) > 4
-                        || (my_road[foresight + 4].white_num) > 4
+    if ((my_road[foresight].white_num > 5)
+            || (my_road[foresight - 2].white_num) > 5
+                        || (my_road[foresight - 4].white_num) > 5
+                        || (my_road[foresight - 6].white_num) > 5
+                        || (my_road[foresight - 8].white_num) > 5
+                        || (my_road[foresight + 2].white_num) > 5
+                        || (my_road[foresight + 4].white_num) > 5
 )
     {
         banmaxian_flag = 1;
