@@ -20,11 +20,12 @@ float M_right_drs = 0;    //右电机理想速度
 
 cardata c_data[2]=
 {
-        {{22,0,150},7.55,7.55,0.019,0.012,0.020,0.010},
-        {{22,0,150},7.55,7.55,0.019,0.012,0.020,0.010},
+        {{22,0,150},7.55,7.55,0.019,0.012,0.020,0.010,1.0},
+        {{22,0,150},7.55,7.55,0.019,0.012,0.020,0.010,1.0},
 };
 void Motor_ctr(void)//电机控制闭环
 {
+
     mot_left =  SCFTM_GetSpeed(FTM1);
     SCFTM_ClearSpeed(FTM1);
     mot_right = -SCFTM_GetSpeed(FTM2);
@@ -156,5 +157,13 @@ void Motorsp_Set(float x,float y)
     *p = x;
     p = &M_right_drs;
     *p = y;
+
+}
+void Speed_radio(float x)
+{
+    float fa,a;
+       (x<0)?(a = -x):(a=x);
+       fa = (c_data[0].Sradio)*(0.6001*pow(a,3)-0.6745*pow(a,2)+0.8443*a)+1.00;
+       (x>0)?(Motorsp_Set((c_data[0].Motorspeed[0])/fa,(c_data[0].Motorspeed[0]))):(Motorsp_Set((c_data[0].Motorspeed[0]),((c_data[0].Motorspeed[0])/fa)));
 
 }

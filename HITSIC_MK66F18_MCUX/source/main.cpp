@@ -164,12 +164,12 @@ void main(void)
         switch(mode_flag)//菜单模式
         {
         case 0x00: {
-
                 MENU_Resume();
                 delay_runcar = 0;
             while(true)
              {
                 prem_flag = mode_flag;
+                servo_init(&(c_data[0].servo_pwm));//舵机初始化
                 Motorsp_Init();
                 if(prem_flag != mode_flag) break;
               }
@@ -242,6 +242,7 @@ void main(void)
              //DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer1);
              DMADVP_TransferStart(DMADVP0, &dmadvpHandle);
              Motorsp_Init();//电机速度初始化
+             servo_init(&(c_data[0].servo_pwm));//舵机初始化
              delay_runcar = 0;
              SDK_DelayAtLeastUs(5000000,180*1000*1000);
              delay_runcar = 1;//延时发车
@@ -286,6 +287,7 @@ void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffe
                      THRE();
                      image_main();
                      servo_pid();
+                     Speed_radio((c_data[0].servo_pwm-c_data[0].servo_mid));
                              dispBuffer->Clear();
                              const uint8_t imageTH = 120;
                              for (int i = 0; i < cameraCfg.imageRow; i += 2)
