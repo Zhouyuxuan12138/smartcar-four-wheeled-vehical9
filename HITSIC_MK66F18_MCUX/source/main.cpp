@@ -163,7 +163,7 @@ void main(void)
     {
         switch(mode_flag)//菜单模式
         {
-        case 0x08: {
+        case 0x00: {
 
                 MENU_Resume();
                 delay_runcar = 1;
@@ -227,7 +227,7 @@ void main(void)
                   }
                 }
                     break;
-        case 0x00://摄像头跑车模式
+        case 0x08://摄像头跑车模式
         {
             MENU_Suspend();
             CAM_ZF9V034_GetDefaultConfig(&cameraCfg);                                   //设置摄像头配置
