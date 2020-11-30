@@ -27,9 +27,9 @@ void Motor_ctr(void)//电机控制闭环
 {
 
     mot_left =  SCFTM_GetSpeed(FTM1);
-    SCFTM_ClearSpeed(FTM1);
+    SCFTM_ClearSpeed(FTM1);//测试差速时可以注释掉
     mot_right = -SCFTM_GetSpeed(FTM2);
-    SCFTM_ClearSpeed(FTM2);
+    SCFTM_ClearSpeed(FTM2);//测试差速时可以注释掉
     if(banmaxian_flag == 1) {Motorsp_Set(0.0,0.0);Motor_pid();}
     else    Motor_pid();
     if(delay_runcar == 0)//延迟发车
@@ -43,11 +43,11 @@ void Motor_ctr(void)//电机控制闭环
     {
     /*限幅代码*/
     float *p;
-    if(M_left_pwm>35.0) {p = &M_left_pwm;*p = 35.0;}
-    else if(M_left_pwm<-35.0) {p = &M_left_pwm;*p = -35.0;}
+    if(M_left_pwm>45.0) {p = &M_left_pwm;*p = 45.0;}
+    else if(M_left_pwm<-45.0) {p = &M_left_pwm;*p = -45.0;}
     else p = NULL;
-    if(M_right_pwm>35.0) {p = &M_right_pwm;*p = 35.0;}
-    else if(M_right_pwm<-35.0) {p = &M_right_pwm;*p = -35.0;}
+    if(M_right_pwm>45.0) {p = &M_right_pwm;*p = 45.0;}
+    else if(M_right_pwm<-45.0) {p = &M_right_pwm;*p = -45.0;}
     else p = NULL;
     /*限幅代码*/
     /*if((ADC[1]<=40&&ADC[7]<=40)||delay_runcar==0)
@@ -142,12 +142,12 @@ void Motor_pid()
     *p_pwm += c_data[0].M_Kp*((*p_erro)-(*p_errolast))+c_data[0].M_Ki*(*p_erro);//右电机增量式
     *p_errolast = *p_erro;//记录上一次偏差右
     /*限幅代码*/
-    if(M_left_pwm>35.0) {m_pwm = &M_left_pwm;*m_pwm = 35.0;}
-    else if(M_left_pwm<-35.0) {m_pwm = &M_left_pwm;*m_pwm = -35.0;}
-    //else m_pwm = NULL;
-    if(M_right_pwm>35.0) {m_pwm = &M_right_pwm;*m_pwm = 35.0;}
-    else if(M_right_pwm<-35.0) {m_pwm = &M_right_pwm;*m_pwm = -35.0;}
-    //else m_pwm = NULL;
+    if(M_left_pwm>45.0) {m_pwm = &M_left_pwm;*m_pwm = 45.0;}
+    else if(M_left_pwm<-45.0) {m_pwm = &M_left_pwm;*m_pwm = -45.0;}
+    else m_pwm = NULL;
+    if(M_right_pwm>45.0) {m_pwm = &M_right_pwm;*m_pwm = 45.0;}
+    else if(M_right_pwm<-45.0) {m_pwm = &M_right_pwm;*m_pwm = -45.0;}
+    else m_pwm = NULL;
     /*限幅代码*/
 }
 void Motorsp_Set(float x,float y)
@@ -163,7 +163,7 @@ void Speed_radio(float x)
 {
     float fa,a;
        (x<0)?(a = -x):(a=x);
-       fa = (c_data[0].Sradio)*(0.6001*pow(a,3)-0.6745*pow(a,2)+0.8443*a)+1.00;
-       (x>0)?(Motorsp_Set((c_data[0].Motorspeed[0])/fa,(c_data[0].Motorspeed[0]))):(Motorsp_Set((c_data[0].Motorspeed[0]),((c_data[0].Motorspeed[0])/fa)));
+       fa = (c_data[0].Sradio)*(0.2274*pow(a,3)-0.05485*pow(a,2)+0.7042*a)+1.018;
+       (x>0)?(Motorsp_Set((c_data[0].Motorspeed[0]),((c_data[0].Motorspeed[0])*fa))):(Motorsp_Set(((c_data[0].Motorspeed[0])*fa),(c_data[0].Motorspeed[0])));
 
 }
