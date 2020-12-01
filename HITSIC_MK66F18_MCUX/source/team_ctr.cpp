@@ -30,7 +30,7 @@ void Motor_ctr(void)//电机控制闭环
     SCFTM_ClearSpeed(FTM1);//测试差速时可以注释掉
     mot_right = -SCFTM_GetSpeed(FTM2);
     SCFTM_ClearSpeed(FTM2);//测试差速时可以注释掉
-    if(banmaxian_flag == 1) {Motorsp_Set(0.0,0.0);Motor_pid();}
+    if(banmaxian_flag == 1|| out_flag== 1) {Motorsp_Set(0.0,0.0);Motor_pid();}
     else    Motor_pid();
     if(delay_runcar == 0)//延迟发车
     {

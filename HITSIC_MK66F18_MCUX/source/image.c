@@ -42,7 +42,7 @@ point determined_rightup_point;
 
 uint8_t banmaxian_flag = 0;
 uint8_t cross_flag = 0;
-
+uint8_t out_flag= 0;
 
 //每行属于赛道的每个白条子
 typedef struct {
@@ -445,6 +445,7 @@ void image_main()
 {
     //head_clear();//清车头
     banmaxian();//斑马线识别
+    ckeck_out_road();
     find_cross();//十字识别
     //draw_farway();//绘制前瞻
 
@@ -754,6 +755,26 @@ void banmaxian()
         banmaxian_flag = 1;
     }
 
+}
+
+void ckeck_out_road()//检测跑出赛道函数
+{
+    uint8_t* my_map;
+      int count = 0;//检测该范围黑点个数
+      for (int i = 115; i >= 80; i--)
+      {
+          my_map = &IMG[i][0];
+          for (int j = 60; j <= 110; j++)
+            { if (*(my_map + j) ==0)
+                 { count++; }
+            }
+      }
+
+
+      if (count >= 1500)
+          {out_flag= 1;}
+
+      else out_flag= 0;
 }
 
 
