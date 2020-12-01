@@ -100,8 +100,6 @@ void our_menu_test(menu_list_t *menu)
                 MENU_ItemConstruct(varfType, &(c_data[0].Kd), "pid[0]Kd", 12, menuItem_data_region));
         MENU_ListInsert(Servo,
                      MENU_ItemConstruct(varfType, &(c_data[0].servo_mid), "servo_mid", 13, menuItem_data_region));
-        MENU_ListInsert(Servo,
-                     MENU_ItemConstruct(varfType, &(c_data[0].servo_pwm), "servo_pwm", 14, menuItem_data_region));
     }
     MENU_ListInsert(menu, MENU_ItemConstruct(menuType, camera, "camerapar", 0, 0));
     {

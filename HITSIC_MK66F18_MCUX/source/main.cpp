@@ -212,24 +212,10 @@ void main(void)
                            delete &dispBuffer;
                 }
                     break;*/
-        case 0x03://电磁跑车模式
-                {
-                    MENU_Suspend();
-                    DISP_SSD1306_Fill(0);
-                    SDK_DelayAtLeastUs(5000000,180*1000*1000);
-                    delay_runcar = 0;//延迟发车标志位
-                while(true)
-                 {
-                    prem_flag = mode_flag;
-                    elec_runcar();
-                    DISP_SSD1306_Printf_F6x8(30,5,"%c","elecmode");
-                    if(prem_flag != mode_flag) break;
-                  }
-                }
-                    break;
-        case 0x08://摄像头跑车模式
+        case 0x02://摄像头跑车模式
         {
             MENU_Suspend();
+            DISP_SSD1306_Fill(0);
             CAM_ZF9V034_GetDefaultConfig(&cameraCfg);                                   //设置摄像头配置
             CAM_ZF9V034_CfgWrite(&cameraCfg);                                   //写入配置
             CAM_ZF9V034_GetReceiverConfig(&dmadvpCfg, &cameraCfg);    //生成对应接收器的配置数据，使用此数据初始化接受器并接收图像数据。
@@ -258,6 +244,21 @@ void main(void)
               banmaxian_flag = 0;//斑马线识别标志位
 
         }break;
+        case 0x03://电磁跑车模式
+                {
+                    MENU_Suspend();
+                    DISP_SSD1306_Fill(0);
+                    SDK_DelayAtLeastUs(5000000,180*1000*1000);
+                    delay_runcar = 0;//延迟发车标志位
+                while(true)
+                 {
+                    prem_flag = mode_flag;
+                    elec_runcar();
+                    DISP_SSD1306_Printf_F6x8(30,5,"%c","elecmode");
+                    if(prem_flag != mode_flag) break;
+                  }
+                }
+                    break;
         default: break;//其他模式，待定
         }
         //TODO: 在这里添加车模保护代码

@@ -43,6 +43,7 @@ point determined_rightup_point;
 uint8_t banmaxian_flag = 0;
 uint8_t cross_flag = 0;
 
+
 //每行属于赛道的每个白条子
 typedef struct {
     uint8_t   white_num;

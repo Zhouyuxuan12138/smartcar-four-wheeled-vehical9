@@ -164,6 +164,6 @@ void Speed_radio(float x)
     float fa,a;
        (x<0)?(a = -x):(a=x);
        fa = (c_data[0].Sradio)*(0.2274*pow(a,3)-0.05485*pow(a,2)+0.7042*a)+1.018;
-       (x>0)?(Motorsp_Set((c_data[0].Motorspeed[0]),((c_data[0].Motorspeed[0])*fa))):(Motorsp_Set(((c_data[0].Motorspeed[0])*fa),(c_data[0].Motorspeed[0])));
+       (x>0)?(Motorsp_Set(((float)(c_data[0].Motorspeed[0]/fa)),((float)c_data[0].Motorspeed[0]))):(Motorsp_Set((float)(c_data[0].Motorspeed[0]),((float)(c_data[0].Motorspeed[0]/fa))));
 
 }
