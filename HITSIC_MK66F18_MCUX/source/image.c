@@ -743,18 +743,29 @@ void find_cross()
 
 void banmaxian()
 {
+    int count_flag = 0;
+
     if ((my_road[foresight].white_num > 5)
-            || (my_road[foresight - 2].white_num) > 5
-                        || (my_road[foresight - 4].white_num) > 5
-                        || (my_road[foresight - 6].white_num) > 5
-                        || (my_road[foresight - 8].white_num) > 5
-                        || (my_road[foresight + 2].white_num) > 5
-                        || (my_road[foresight + 4].white_num) > 5
-)
+       || (my_road[foresight - 2].white_num) > 5
+       || (my_road[foresight - 4].white_num) > 5
+       //|| (my_road[foresight + 2].white_num) > 5
+       //|| (my_road[foresight + 4].white_num) > 5
+       )
     {
-        banmaxian_flag = 1;
+        if((my_road[foresight - 1].white_num = 1))
+        count_flag ++;
     }
 
+    if((my_road[foresight].white_num > 5)
+       || (my_road[foresight - 2].white_num) > 5
+       || (my_road[foresight - 4].white_num) > 5)
+    {
+        if(count_flag == 1)
+        {
+            banmaxian_flag = 1;
+        }
+
+    }
 }
 
 void ckeck_out_road()//检测跑出赛道函数
