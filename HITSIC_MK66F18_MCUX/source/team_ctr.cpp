@@ -25,13 +25,13 @@ cardata c_data[2]=
 };
 void Motor_ctr(void)//电机控制闭环
 {
-
     mot_left =  SCFTM_GetSpeed(FTM1);
     SCFTM_ClearSpeed(FTM1);//测试差速时可以注释掉
     mot_right = -SCFTM_GetSpeed(FTM2);
     SCFTM_ClearSpeed(FTM2);//测试差速时可以注释掉
-    if(banmaxian_flag == 1|| out_flag== 1) {Motorsp_Set(0.0,0.0);Motor_pid();}
-    else    Motor_pid();
+    //if(banmaxian_flag == 1|| out_flag== 1) {Motorsp_Set(0.0,0.0);Motor_pid();}
+    //else
+    Motor_pid();
     if(delay_runcar == 0)//延迟发车
     {
         SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_0, 20000U,0U);
@@ -165,5 +165,15 @@ void Speed_radio(float x)
        (x<0)?(a = -x):(a=x);
        fa = (c_data[0].Sradio)*(0.2274*pow(a,3)-0.05485*pow(a,2)+0.7042*a)+1.018;
        (x>0)?(Motorsp_Set(((float)(c_data[0].Motorspeed[0]/fa)),((float)c_data[0].Motorspeed[0]))):(Motorsp_Set((float)(c_data[0].Motorspeed[0]),((float)(c_data[0].Motorspeed[0]/fa))));
+
+}
+void motor_Set0(void)
+{
+
+    float *p;
+      p = &M_left_drs;
+      *p = 0.0;
+      p = &M_right_drs;
+      *p = 0.0;
 
 }

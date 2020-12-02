@@ -10,7 +10,7 @@ extern bool delay_runcar;//延迟发车标志位
 extern int32_t mot_left ;
 extern int32_t mot_right;
 extern float M_right_drs;
-//extern float M_left_drs;    //左电机理想速度
+extern float M_left_drs;    //左电机理想速度
 extern float M_right_pwm;
 typedef struct _cardata{
     int32_t Motorspeed[3]= {22,0,150};
@@ -84,4 +84,5 @@ void Motorsp_Set(float x,float y);
 *  Sample usage:                 Motorsp_Init();
 **********************************************************************************************************************/
 void Speed_radio(float x);
+void motor_Set0(void);
 #endif

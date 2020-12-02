@@ -84,6 +84,7 @@ FATFS fatfs;                                   //逻辑驱动器的工作区
 
 #include "image.h"
 #include"team_menu.hpp"
+#include"sc_host.h"
 
 cam_zf9v034_configPacket_t cameraCfg;
 dmadvp_config_t dmadvpCfg;
@@ -94,6 +95,7 @@ inv::mpu6050_t imu_6050(imu_i2c);
 uint8_t mode_flag = 0;//状态切换标志位变量
 uint8_t *p_mflag = NULL;//状态切换指针
 uint8_t prem_flag = 0;//状态切换标志位变量2，previous标志位
+float wifidata[10];
 void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffer);//摄像头跑车函数
 void elec_runcar(void);//电磁跑车函数
 void mode_switch(void);//模式切换中断回调函数
@@ -129,6 +131,8 @@ void main(void)
     pitMgr_t::insert(5U, 1U, Motor_ctr, pitMgr_t::enable);//电机中断
     pitMgr_t::insert(20U, 3U, servo, pitMgr_t::enable);//舵机中断
     pitMgr_t::insert(1000U, 7U, mode_switch, pitMgr_t::enable);//状态切换
+    pitMgr_t::insert(5000U, 1U, Motorsp_Init, pitMgr_t::enable);//电机初始化
+    pitMgr_t::insert(7000U, 0U, motor_Set0, pitMgr_t::enable);//电机设置为0
     /** 初始化I/O中断管理器 */
     extInt_t::init();
     /** 初始化OLED屏幕 */
@@ -236,6 +240,11 @@ void main(void)
                {
                prem_flag = mode_flag;
                run_car(&dmadvpHandle,dispBuffer);
+               wifidata[0]=mot_left;
+               wifidata[1]=mot_right;
+               wifidata[2]=M_left_drs;
+               wifidata[3]=M_right_drs;
+               SCHOST_VarUpload(&wifidata[0],10);
                if(prem_flag != mode_flag) break;
 
                }
@@ -288,7 +297,7 @@ void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffe
                      THRE();
                      image_main();
                      servo_pid();
-                     Speed_radio((c_data[0].servo_pwm-c_data[0].servo_mid));
+                     //Speed_radio((c_data[0].servo_pwm-c_data[0].servo_mid));
                              dispBuffer->Clear();
                              const uint8_t imageTH = 120;
                              for (int i = 0; i < cameraCfg.imageRow; i += 2)
