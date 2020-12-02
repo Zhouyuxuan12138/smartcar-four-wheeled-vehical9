@@ -10,6 +10,7 @@ extern bool delay_runcar;//延迟发车标志位
 extern int32_t mot_left ;
 extern int32_t mot_right;
 extern float M_right_drs;
+extern int32_t mora_flag;
 //extern float M_left_drs;    //左电机理想速度
 extern float M_right_pwm;
 typedef struct _cardata{

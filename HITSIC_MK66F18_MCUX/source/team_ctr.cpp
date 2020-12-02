@@ -5,6 +5,7 @@ float error_n = 0;      //舵机偏差
 float error_n_1 = 0;    //舵机前一次偏差
 int32_t mot_left = 0;  //电机左轮编码器读取
 int32_t mot_right = 0; //电机右轮编码器读取
+int32_t mora_flag = 0;
 
 float mot_err_l = 0;   //左电机偏差值
 float mot_err1_l = 0;  //左电机前一次偏差值
@@ -164,6 +165,9 @@ void Speed_radio(float x)
     float fa,a;
        (x<0)?(a = -x):(a=x);
        fa = (c_data[0].Sradio)*(0.2274*pow(a,3)-0.05485*pow(a,2)+0.7042*a)+1.018;
+       if(mora_flag%2==0)
        (x>0)?(Motorsp_Set(((float)(c_data[0].Motorspeed[0]/fa)),((float)c_data[0].Motorspeed[0]))):(Motorsp_Set((float)(c_data[0].Motorspeed[0]),((float)(c_data[0].Motorspeed[0]/fa))));
+       else
+       (x>0)?(Motorsp_Set(((float)(c_data[0].Motorspeed[0]*2/(fa+1.0))),((float)(c_data[0].Motorspeed[0]*2*fa/(fa+1.0))))):(Motorsp_Set((float)(c_data[0].Motorspeed[0]*2*fa/(fa+1.0)),((float)(c_data[0].Motorspeed[0]*2/(fa+1.0)))));
 
 }
