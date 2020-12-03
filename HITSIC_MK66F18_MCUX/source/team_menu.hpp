@@ -66,7 +66,7 @@ void team_camtoled(void*)
 **********************************************************************************************************************/
 void our_menu_test(menu_list_t *menu)
 {
-    static menu_list_t *Motor = MENU_ListConstruct("Motorpar", 10, menu);
+    static menu_list_t *Motor = MENU_ListConstruct("Motorpar", 15, menu);
     assert(Motor);
     static menu_list_t *Servo = MENU_ListConstruct("Servopar", 10, menu);
     assert(Servo);
