@@ -214,6 +214,7 @@ void main(void)
                     break;*/
         case 0x02://摄像头跑车模式
         {
+            pitMgr_t *p;//测试删除定时器中断
             MENU_Suspend();
             DISP_SSD1306_Fill(0);
             CAM_ZF9V034_GetDefaultConfig(&cameraCfg);                                   //设置摄像头配置
@@ -230,10 +231,10 @@ void main(void)
              Motorsp_Init();//电机速度初始化
              servo_init(&(c_data[0].servo_pwm));//舵机初始化
              delay_runcar = 0;
-             SDK_DelayAtLeastUs(5000000,180*1000*1000);
-             delay_runcar = 1;//延时发车
+             p = pitMgr_t::insert(5000U, 1U, Delay_car, pitMgr_t::enable);//延时发车，测试删除定时器中断
              while(true)
                {
+               if(delay_runcar==1) pitMgr_t::remove(*p);
                prem_flag = mode_flag;
                run_car(&dmadvpHandle,dispBuffer);
                if(prem_flag != mode_flag) break;

@@ -171,3 +171,7 @@ void Speed_radio(float x)
        (x>0)?(Motorsp_Set(((float)(c_data[0].Motorspeed[0]*2/(fa+1.0))),((float)(c_data[0].Motorspeed[0]*2*fa/(fa+1.0))))):(Motorsp_Set((float)(c_data[0].Motorspeed[0]*2*fa/(fa+1.0)),((float)(c_data[0].Motorspeed[0]*2/(fa+1.0)))));
 
 }
+void Delay_car()
+{
+    delay_runcar = 1;
+}
