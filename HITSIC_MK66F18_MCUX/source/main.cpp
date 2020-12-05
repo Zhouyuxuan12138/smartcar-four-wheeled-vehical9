@@ -234,7 +234,7 @@ void main(void)
              p = pitMgr_t::insert(5000U, 1U, Delay_car, pitMgr_t::enable);//延时发车，测试删除定时器中断
              while(true)
                {
-               if(delay_runcar==1) pitMgr_t::remove(*p);
+               if(delay_runcar==1) pitMgr_t::remove(*p);//测试不再延迟发车，清除定时器中断
                prem_flag = mode_flag;
                run_car(&dmadvpHandle,dispBuffer);
                if(prem_flag != mode_flag) break;
