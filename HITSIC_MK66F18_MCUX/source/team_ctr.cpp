@@ -91,7 +91,7 @@ void servo_init(float *pwm)
 }
 void servo_pid()
 {
-    servo_init(&(c_data[0].servo_pwm));
+    //servo_init(&(c_data[0].servo_pwm));
     float pwm_error = 0;
     error_n = get_error();
     //error_n = Get_erro();
