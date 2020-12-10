@@ -19,6 +19,7 @@ float M_right_pwm = 0;   //右电机pwm值
 float M_left_drs = 0;    //左电机理想速度
 float M_right_drs = 0;    //右电机理想速度
 
+
 cardata c_data[2]=
 {
         {{22,0,150},7.55,7.55,0.019,0.012,0.020,0.010,1.0},
@@ -152,6 +153,11 @@ void Motor_pid()
     else if(M_right_pwm<-45.0) {m_pwm = &M_right_pwm;*m_pwm = -45.0;}
     else m_pwm = NULL;
     /*限幅代码*/
+   }
+   else
+   {
+       p_pwm=p_erro=p_errolast=p_drs=m_pwm=NULL;
+
    }
 
 }

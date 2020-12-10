@@ -5,13 +5,14 @@
 #include "image.h"
 #include "team_elec.hpp"
 #include "math.h"
+
 extern float error_n;//偏差值，定义为全局变量，为了在菜单显示
 extern bool delay_runcar;//延迟发车标志位
 extern int32_t mot_left ;
 extern int32_t mot_right;
 extern float M_right_drs;
 extern int32_t mora_flag;
-//extern float M_left_drs;    //左电机理想速度
+extern float M_left_drs;    //左电机理想速度
 extern float M_right_pwm;
 typedef struct _cardata{
     int32_t Motorspeed[3]= {22,0,150};
