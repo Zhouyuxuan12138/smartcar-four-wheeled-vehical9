@@ -126,7 +126,9 @@ void Motorsp_Init()
 
 void Motor_pid()
 {
-    float *p_pwm,*p_erro,*p_errolast,*p_drs,*m_pwm;
+   float *p_pwm,*p_erro,*p_errolast,*p_drs,*m_pwm;
+   if(delay_runcar == 1)
+   {
     p_erro = &mot_err_l;
     p_drs = &M_left_drs;
     p_pwm = &M_left_pwm;
@@ -150,6 +152,8 @@ void Motor_pid()
     else if(M_right_pwm<-45.0) {m_pwm = &M_right_pwm;*m_pwm = -45.0;}
     else m_pwm = NULL;
     /*限幅代码*/
+   }
+
 }
 void Motorsp_Set(float x,float y)
 {
