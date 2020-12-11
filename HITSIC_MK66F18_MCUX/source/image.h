@@ -14,14 +14,14 @@
 #include <math.h>
 #include "image.h"
 
-#define MISS 255
+//#define MISS 94
 #define CAMERA_H  120                            //图片高度
 #define CAMERA_W  188                            //图片宽度
 #define FAR_LINE 1//图像处理上边界
 #define NEAR_LINE 113//图像处理下边界
 #define LEFT_SIDE 0//图像处理左边界
 #define RIGHT_SIDE 187//图像处理右边界
-#define MISS 255
+#define MISS 94
 #define white_num_MAX 10//每行最多允许白条数
 
 /////////////////////////////
