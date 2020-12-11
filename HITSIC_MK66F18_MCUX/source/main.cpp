@@ -84,7 +84,7 @@ FATFS fatfs;                                   //逻辑驱动器的工作区
 
 #include "image.h"
 #include"team_menu.hpp"
-#include"sc_host.h"
+
 
 cam_zf9v034_configPacket_t cameraCfg;
 dmadvp_config_t dmadvpCfg;
@@ -95,7 +95,7 @@ inv::mpu6050_t imu_6050(imu_i2c);
 uint8_t mode_flag = 0;//状态切换标志位变量
 uint8_t *p_mflag = NULL;//状态切换指针
 uint8_t prem_flag = 0;//状态切换标志位变量2，previous标志位
-float wifidata[4];
+
 void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffer);//摄像头跑车函数
 void elec_runcar(void);//电磁跑车函数
 void mode_switch(void);//模式切换中断回调函数
@@ -239,7 +239,6 @@ void main(void)
                if(delay_runcar==1) pitMgr_t::remove(*p);//测试不再延迟发车，清除定时器中断
                prem_flag = mode_flag;
                run_car(&dmadvpHandle,dispBuffer);
-               wifidata[0]=mot_left;wifidata[1]=mot_right;wifidata[2]=M_left_drs;wifidata[3]=M_right_drs;
                if(prem_flag != mode_flag) break;
 
                }

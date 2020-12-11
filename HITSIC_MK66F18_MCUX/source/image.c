@@ -725,8 +725,8 @@ void search_rightup_point()
 
 void find_cross()
 {
-    if (my_road[40].white_num == 1 &&
-        (      (my_road[40].connected[1].width) > 160
+    if (my_road[35].white_num == 1 &&
+        (      (my_road[35].connected[1].width) > 160
 
             //|| (my_road[foresight + 6].connected[1].width) > 160
             ))

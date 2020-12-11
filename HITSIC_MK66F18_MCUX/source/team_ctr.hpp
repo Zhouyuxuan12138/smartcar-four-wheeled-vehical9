@@ -5,6 +5,7 @@
 #include "image.h"
 #include "team_elec.hpp"
 #include "math.h"
+#include"sc_host.h"
 
 extern float error_n;//偏差值，定义为全局变量，为了在菜单显示
 extern bool delay_runcar;//延迟发车标志位

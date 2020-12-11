@@ -18,7 +18,7 @@ float M_right_pwm = 0;   //右电机pwm值
 
 float M_left_drs = 0;    //左电机理想速度
 float M_right_drs = 0;    //右电机理想速度
-
+float wifidata[4];        //WiFi传输数组
 
 cardata c_data[2]=
 {
@@ -32,7 +32,7 @@ void Motor_ctr(void)//电机控制闭环
     SCFTM_ClearSpeed(FTM1);//测试差速时可以注释掉
     mot_right = -SCFTM_GetSpeed(FTM2);
     SCFTM_ClearSpeed(FTM2);//测试差速时可以注释掉
-    if(banmaxian_flag == 1|| out_flag== 1) {Motorsp_Set(0.0,0.0);Motor_pid();}
+    if(banmaxian_flag == 1||out_flag == 1) {Motorsp_Set(0.0,0.0);Motor_pid();}
     else    Motor_pid();
     if(delay_runcar == 0)//延迟发车
     {
@@ -81,6 +81,8 @@ void Motor_ctr(void)//电机控制闭环
         SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_2, 20000U, 0U);//左轮反转kFTM_Chnl_3> kFTM_Chnl_2
     }
    }
+    wifidata[0]=mot_left;wifidata[1]=mot_right;wifidata[2]=M_left_drs;wifidata[3]=M_right_drs;
+    SCHOST_VarUpload(&wifidata[0],4);//WiFi上传数据
 }
 
 
@@ -175,6 +177,7 @@ void Speed_radio(float x)
     float fa,a;
        (x<0)?(a = -x):(a=x);
        fa = (c_data[0].Sradio)*(0.2274*pow(a,3)-0.05485*pow(a,2)+0.7042*a)+1.018;
+       (fa>1.2)?fa:fa=1.0;
        if(mora_flag%2==0)
        (x>0)?(Motorsp_Set(((float)(c_data[0].Motorspeed[0]/fa)),((float)c_data[0].Motorspeed[0]))):(Motorsp_Set((float)(c_data[0].Motorspeed[0]),((float)(c_data[0].Motorspeed[0]/fa))));
        else
