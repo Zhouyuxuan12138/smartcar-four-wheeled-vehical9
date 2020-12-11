@@ -41,6 +41,7 @@ extern int threshold;
 extern int foresight;
 extern uint8_t banmaxian_flag;
 extern uint8_t out_flag;
+extern int zebra;
 
 void head_clear(void);
 void THRE(void);
@@ -64,7 +65,7 @@ void connect_line_plan();
 void  connect_line(int x1, int y1, int x2, int y2,int flag);
 float check_k(int line, uint8_t* array, int length, int flag);
 void find_cross();
-void banmaxian();
+void banmaxian(int zebra);
 void ckeck_out_road();
 
 #endif //

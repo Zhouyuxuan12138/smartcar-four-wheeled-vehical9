@@ -17,13 +17,13 @@ extern float M_left_drs;    //左电机理想速度
 extern float M_right_pwm;
 typedef struct _cardata{
     int32_t Motorspeed[3]= {22,0,150};
-    float servo_mid=7.55;            //定义舵机中值
-    float servo_pwm=7.55;            //定义舵机pwm值
-    float Kp = 0.019;                //定义舵机比例系数
-    float Kd = 0.012;                //定义舵机微分系数
-    float M_Kp = 0.020;              //定义电机比例系数
-    float M_Ki = 0.010;              //定义电机积分系数
-    float Sradio = 1.0;
+    float servo_mid=7.51;            //定义舵机中值
+    float servo_pwm=7.51;            //定义舵机pwm值
+    float Kp = 0.0091;                //定义舵机比例系数
+    float Kd = 0.0065;                //定义舵机微分系数
+    float M_Kp = 1.0;              //定义电机比例系数
+    float M_Ki = 0.4;              //定义电机积分系数
+    float Sradio = 2.0;
 }cardata;
 
 extern cardata c_data[2];//车数据数组

@@ -110,6 +110,8 @@ void our_menu_test(menu_list_t *menu)
                        MENU_ItemConstruct(variType, &(foresight), "foresight",21, menuItem_data_region));
         MENU_ListInsert(camera,
                        MENU_ItemConstruct(variType, &(threshold), "threshold",22, menuItem_data_region));
+        MENU_ListInsert(camera,
+                       MENU_ItemConstruct(variType, &(zebra), "zebra",23, menuItem_data_region));
         MENU_ListInsert(camera, MENU_ItemConstruct(nullType, NULL, "elec", 0, 0));
         /*MENU_ListInsert(TestList,
                                MENU_ItemConstruct(varfType, &(ADC[0]), "adc0",0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));*/

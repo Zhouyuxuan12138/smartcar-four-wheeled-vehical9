@@ -22,8 +22,8 @@ float wifidata[4];        //WiFi传输数组
 
 cardata c_data[2]=
 {
-        {{22,0,150},7.55,7.55,0.019,0.012,0.020,0.010,1.0},
-        {{22,0,150},7.55,7.55,0.019,0.012,0.020,0.010,1.0},
+        {{22,0,150},7.51,7.51,0.0091,0.0065,1.0,0.4,2.0},
+        {{22,0,150},7.51,7.51,0.0091,0.0065,1.0,0.4,2.0},
 };
 void Motor_ctr(void)//电机控制闭环
 {
@@ -45,11 +45,11 @@ void Motor_ctr(void)//电机控制闭环
     {
     /*限幅代码*/
     float *p;
-    if(M_left_pwm>45.0) {p = &M_left_pwm;*p = 45.0;}
-    else if(M_left_pwm<-45.0) {p = &M_left_pwm;*p = -45.0;}
+    if(M_left_pwm>50.0) {p = &M_left_pwm;*p = 50.0;}
+    else if(M_left_pwm<-50.0) {p = &M_left_pwm;*p = -50.0;}
     else p = NULL;
-    if(M_right_pwm>45.0) {p = &M_right_pwm;*p = 45.0;}
-    else if(M_right_pwm<-45.0) {p = &M_right_pwm;*p = -45.0;}
+    if(M_right_pwm>50.0) {p = &M_right_pwm;*p = 50.0;}
+    else if(M_right_pwm<-50.0) {p = &M_right_pwm;*p = -50.0;}
     else p = NULL;
     /*限幅代码*/
     /*if((ADC[1]<=40&&ADC[7]<=40)||delay_runcar==0)
@@ -148,11 +148,11 @@ void Motor_pid()
     *p_pwm += c_data[0].M_Kp*((*p_erro)-(*p_errolast))+c_data[0].M_Ki*(*p_erro);//右电机增量式
     *p_errolast = *p_erro;//记录上一次偏差右
     /*限幅代码*/
-    if(M_left_pwm>45.0) {m_pwm = &M_left_pwm;*m_pwm = 45.0;}
-    else if(M_left_pwm<-45.0) {m_pwm = &M_left_pwm;*m_pwm = -45.0;}
+    if(M_left_pwm>50.0) {m_pwm = &M_left_pwm;*m_pwm = 50.0;}
+    else if(M_left_pwm<-50.0) {m_pwm = &M_left_pwm;*m_pwm = -50.0;}
     else m_pwm = NULL;
-    if(M_right_pwm>45.0) {m_pwm = &M_right_pwm;*m_pwm = 45.0;}
-    else if(M_right_pwm<-45.0) {m_pwm = &M_right_pwm;*m_pwm = -45.0;}
+    if(M_right_pwm>50.0) {m_pwm = &M_right_pwm;*m_pwm = 50.0;}
+    else if(M_right_pwm<-50.0) {m_pwm = &M_right_pwm;*m_pwm = -50.0;}
     else m_pwm = NULL;
     /*限幅代码*/
    }
