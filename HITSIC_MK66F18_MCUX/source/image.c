@@ -726,8 +726,8 @@ void search_rightup_point()
 
 void find_cross()
 {
-    if (my_road[34].white_num == 1 &&
-        (      (my_road[34].connected[1].width) > 160
+    if (my_road[32].white_num == 1 &&
+        (      (my_road[32].connected[1].width) > 160
 
             //|| (my_road[foresight + 6].connected[1].width) > 160
             ))
@@ -749,8 +749,8 @@ void banmaxian(int zebra)
     if ((my_road[foresight].white_num > zebra)
        || (my_road[foresight - 2].white_num) > zebra
        || (my_road[foresight - 4].white_num) > zebra
-       || (my_road[foresight + 2].white_num) > zebra
-       || (my_road[foresight + 4].white_num) > zebra
+       || (my_road[foresight - 6].white_num) > zebra
+       || (my_road[foresight - 8].white_num) > zebra
        )
            {
                 banmaxian_flag = 1;

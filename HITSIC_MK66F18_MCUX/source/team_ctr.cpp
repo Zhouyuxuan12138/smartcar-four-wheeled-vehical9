@@ -177,12 +177,18 @@ void Speed_radio(float x)
     float fa,a;
        (x<0)?(a = -x):(a=x);
        fa = (c_data[0].Sradio)*(0.2274*pow(a,3)-0.05485*pow(a,2)+0.7042*a)+1.018;
-       (fa>1.2)?fa:fa=1.0;
+       (fa>0)?fa:fa=1.5;
+       if(fa>1.12)
+       {
        if(mora_flag%2==0)
        (x>0)?(Motorsp_Set(((float)(c_data[0].Motorspeed[0]/fa)),((float)c_data[0].Motorspeed[0]))):(Motorsp_Set((float)(c_data[0].Motorspeed[0]),((float)(c_data[0].Motorspeed[0]/fa))));
        else
        (x>0)?(Motorsp_Set(((float)(c_data[0].Motorspeed[0]*2/(fa+1.0))),((float)(c_data[0].Motorspeed[0]*2*fa/(fa+1.0))))):(Motorsp_Set((float)(c_data[0].Motorspeed[0]*2*fa/(fa+1.0)),((float)(c_data[0].Motorspeed[0]*2/(fa+1.0)))));
-
+       }
+       else
+       {
+        Motorsp_Set((c_data[0].Motorspeed[0]+10.0),(c_data[0].Motorspeed[0]+10.0));
+       }
 }
 void Delay_car()
 {
