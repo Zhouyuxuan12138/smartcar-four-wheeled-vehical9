@@ -66,7 +66,7 @@ void team_camtoled(void*)
 **********************************************************************************************************************/
 void our_menu_test(menu_list_t *menu)
 {
-    static menu_list_t *Motor = MENU_ListConstruct("Motorpar", 10, menu);
+    static menu_list_t *Motor = MENU_ListConstruct("Motorpar", 15, menu);
     assert(Motor);
     static menu_list_t *Servo = MENU_ListConstruct("Servopar", 10, menu);
     assert(Servo);
@@ -91,6 +91,8 @@ void our_menu_test(menu_list_t *menu)
                         MENU_ItemConstruct(varfType, &(c_data[0].M_Ki), "M_Ki",2, menuItem_data_region));
         MENU_ListInsert(Motor,
                         MENU_ItemConstruct(varfType, &(c_data[0].Sradio), "Sradio",3, menuItem_data_region));
+        MENU_ListInsert(Motor,
+                        MENU_ItemConstruct(variType, &(mora_flag), "mora_flag",4, menuItem_data_region));
     }
     MENU_ListInsert(menu, MENU_ItemConstruct(menuType, Servo, "servopara", 0, 0));
     {   MENU_ListInsert(Servo, MENU_ItemConstruct(nullType, NULL, "servo", 0, 0));
@@ -101,13 +103,15 @@ void our_menu_test(menu_list_t *menu)
         MENU_ListInsert(Servo,
                      MENU_ItemConstruct(varfType, &(c_data[0].servo_mid), "servo_mid", 13, menuItem_data_region));
     }
-    MENU_ListInsert(menu, MENU_ItemConstruct(menuType, camera, "camerapar", 0, 0));
+    MENU_ListInsert(menu, MENU_ItemConstruct(menuType, camera, "came_elec", 0, 0));
     {
         MENU_ListInsert(camera, MENU_ItemConstruct(nullType, NULL, "camerorelec", 0, 0));
         MENU_ListInsert(camera,
                        MENU_ItemConstruct(variType, &(foresight), "foresight",21, menuItem_data_region));
         MENU_ListInsert(camera,
                        MENU_ItemConstruct(variType, &(threshold), "threshold",22, menuItem_data_region));
+        MENU_ListInsert(camera,
+                       MENU_ItemConstruct(variType, &(zebra), "zebra",23, menuItem_data_region));
         MENU_ListInsert(camera, MENU_ItemConstruct(nullType, NULL, "elec", 0, 0));
         /*MENU_ListInsert(TestList,
                                MENU_ItemConstruct(varfType, &(ADC[0]), "adc0",0, menuItem_data_ROFlag | menuItem_data_NoSave | menuItem_data_NoLoad));*/

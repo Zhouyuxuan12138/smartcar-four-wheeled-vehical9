@@ -43,6 +43,7 @@ point determined_rightup_point;
 uint8_t banmaxian_flag = 0;
 uint8_t cross_flag = 0;
 uint8_t out_flag= 0;
+int zebra = 5;
 
 //每行属于赛道的每个白条子
 typedef struct {
@@ -444,7 +445,7 @@ void get_mid_line(void)
 void image_main()
 {
     //head_clear();//清车头
-    banmaxian();//斑马线识别
+    banmaxian(zebra);//斑马线识别
     ckeck_out_road();
     find_cross();//十字识别
     //draw_farway();//绘制前瞻
@@ -725,8 +726,8 @@ void search_rightup_point()
 
 void find_cross()
 {
-    if (my_road[40].white_num == 1 &&
-        (      (my_road[40].connected[1].width) > 160
+    if (my_road[34].white_num == 1 &&
+        (      (my_road[34].connected[1].width) > 160
 
             //|| (my_road[foresight + 6].connected[1].width) > 160
             ))
@@ -741,24 +742,28 @@ void find_cross()
 }
 
 
-void banmaxian()
+void banmaxian(int zebra)
 {
     int count_flag = 0;
 
-    if ((my_road[foresight].white_num > 5)
-       || (my_road[foresight - 2].white_num) > 5
-       || (my_road[foresight - 4].white_num) > 5
-       //|| (my_road[foresight + 2].white_num) > 5
-       //|| (my_road[foresight + 4].white_num) > 5
+    if ((my_road[foresight].white_num > zebra)
+       || (my_road[foresight - 2].white_num) > zebra
+       || (my_road[foresight - 4].white_num) > zebra
+       || (my_road[foresight + 2].white_num) > zebra
+       || (my_road[foresight + 4].white_num) > zebra
        )
-    {
+           {
+                banmaxian_flag = 1;
+            }
+}
+    /*{
         if((my_road[foresight - 1].white_num = 1))
         count_flag ++;
     }
 
-    if((my_road[foresight].white_num > 5)
-       || (my_road[foresight - 2].white_num) > 5
-       || (my_road[foresight - 4].white_num) > 5)
+    if((my_road[foresight].white_num > 6)
+       || (my_road[foresight - 2].white_num) > 6
+       || (my_road[foresight - 4].white_num) > 6)
     {
         if(count_flag == 1)
         {
@@ -766,7 +771,7 @@ void banmaxian()
         }
 
     }
-}
+}*/
 
 void ckeck_out_road()//检测跑出赛道函数
 {
