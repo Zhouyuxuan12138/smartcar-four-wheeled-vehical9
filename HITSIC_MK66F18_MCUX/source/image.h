@@ -13,6 +13,7 @@
 //#include "highgui.h"
 #include <math.h>
 #include "image.h"
+#include "fsl_common.h"
 
 //#define MISS 94
 #define CAMERA_H  120                            //图片高度

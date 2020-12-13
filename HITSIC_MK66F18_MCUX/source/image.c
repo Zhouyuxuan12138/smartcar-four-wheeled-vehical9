@@ -730,8 +730,10 @@ void find_cross()
         (      (my_road[32].connected[1].width) > 160
 
             //|| (my_road[foresight + 6].connected[1].width) > 160
-            ))
+            )
+            )
     {
+
         cross_flag = 1;
     }
 
@@ -753,6 +755,7 @@ void banmaxian(int zebra)
        || (my_road[foresight - 8].white_num) > zebra
        )
            {
+        SDK_DelayAtLeastUs(100000,180*1000*1000);
                 banmaxian_flag = 1;
             }
 }
