@@ -172,7 +172,7 @@ void main(void)
              {
                 prem_flag = mode_flag;
                 servo_init(&(c_data[0].servo_pwm));//舵机初始化
-                Motorsp_Init();
+                Motorsp_Init(&c_data[0]);
                 if(prem_flag != mode_flag) break;
               }
             }
@@ -230,7 +230,7 @@ void main(void)
              DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer0);
              //DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer1);
              DMADVP_TransferStart(DMADVP0, &dmadvpHandle);
-             Motorsp_Init();//电机速度初始化
+             Motorsp_Init(&c_data[0]);//电机速度初始化
              servo_init(&(c_data[0].servo_pwm));//舵机初始化
              delay_runcar = 0;
              p = pitMgr_t::insert(5000U, 1U, Delay_car, pitMgr_t::enable);//延时发车，测试删除定时器中断
@@ -290,7 +290,7 @@ void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffe
     while (kStatus_Success != DMADVP_TransferGetFullBuffer(DMADVP0, dmadvpHandle,&fullBuffer));
                      THRE();
                      image_main();
-                     servo_pid();
+                     servo_pid(&c_data[0]);
                      Speed_radio((c_data[0].servo_pwm-c_data[0].servo_mid));
                              dispBuffer->Clear();
                              const uint8_t imageTH = 120;
@@ -313,7 +313,7 @@ void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffe
 }
 void elec_runcar(void)//电磁跑车函数
 {
-    servo_pid();
+    servo_pid(&c_data[0]);
 }
 void mode_switch(void)//模式切换中断回调函数
 {

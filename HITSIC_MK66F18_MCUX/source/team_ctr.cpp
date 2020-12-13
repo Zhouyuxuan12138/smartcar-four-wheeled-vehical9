@@ -25,15 +25,15 @@ cardata c_data[2]=
         {{22,0,150},7.51,7.51,0.0091,0.0065,1.0,0.4,2.0},
         {{22,0,150},7.51,7.51,0.0091,0.0065,1.0,0.4,2.0},
 };
-void Motor_ctr(void)//电机控制闭环
+void Motor_ctr(cardata *cdata)//电机控制闭环
 {
 
     mot_left =  SCFTM_GetSpeed(FTM1);
     SCFTM_ClearSpeed(FTM1);//测试差速时可以注释掉
     mot_right = -SCFTM_GetSpeed(FTM2);
     SCFTM_ClearSpeed(FTM2);//测试差速时可以注释掉
-    if(banmaxian_flag == 1||out_flag == 1) {Motorsp_Set(0.0,0.0);Motor_pid();}
-    else    Motor_pid();
+    if(banmaxian_flag == 1||out_flag == 1) {Motorsp_Set(0.0,0.0);Motor_pid(cdata);}
+    else    Motor_pid(cdata);
     if(delay_runcar == 0)//延迟发车
     {
         SCFTM_PWM_ChangeHiRes(MOTOR_PERIPHERAL, kFTM_Chnl_0, 20000U,0U);
@@ -92,19 +92,19 @@ void servo_init(float *pwm)
     *pwm = c_data[0].servo_mid;
 
 }
-void servo_pid()
+void servo_pid(cardata *cdata)
 {
     //servo_init(&(c_data[0].servo_pwm));
     float pwm_error = 0;
     error_n = get_error();
     //error_n = Get_erro();
-    pwm_error = c_data[0].Kp*error_n+c_data[0].Kd*(error_n-error_n_1);
-    c_data[0].servo_pwm=c_data[0].servo_mid+pwm_error;
+    pwm_error = cdata->Kp*error_n+cdata->Kd*(error_n-error_n_1);
+    cdata->servo_pwm=cdata->servo_mid+pwm_error;
     error_n_1 = error_n;
-    if(c_data[0].servo_pwm<6.8)
-            c_data[0].servo_pwm=6.8;
-    else if(c_data[0].servo_pwm>8.2)
-            c_data[0].servo_pwm=8.2;
+    if(cdata->servo_pwm<6.8)
+        cdata->servo_pwm=6.8;
+    else if(cdata->servo_pwm>8.2)
+        cdata->servo_pwm=8.2;
 }
 
 void servo()
@@ -116,18 +116,18 @@ void servo()
             c_data[0].servo_pwm=8.2;
     SCFTM_PWM_ChangeHiRes(FTM3,kFTM_Chnl_7,50,c_data[0].servo_pwm);
 }
-void Motorsp_Init()
+void Motorsp_Init(cardata *cdata)
 {
     float *p_sp;
     p_sp = &M_left_drs;
-    *p_sp = (float)c_data[0].Motorspeed[0];
+    *p_sp = (float)cdata->Motorspeed[0];
     p_sp = &M_right_drs;
-    *p_sp = (float)c_data[0].Motorspeed[0];
+    *p_sp = (float)cdata->Motorspeed[0];
 
 }
 
 
-void Motor_pid()
+void Motor_pid(cardata *cdata)
 {
    float *p_pwm,*p_erro,*p_errolast,*p_drs,*m_pwm;
    if(delay_runcar == 1)
@@ -137,7 +137,7 @@ void Motor_pid()
     p_pwm = &M_left_pwm;
     p_errolast = &mot_err1_l;
     *p_erro = *p_drs-(float)mot_left;//左电机偏差
-    *p_pwm += c_data[0].M_Kp*((*p_erro)-(*p_errolast))+c_data[0].M_Ki*(*p_erro);//左电机增量式
+    *p_pwm += cdata->M_Kp*((*p_erro)-(*p_errolast))+cdata->M_Ki*(*p_erro);//左电机增量式
     *p_errolast = *p_erro;//记录上一次偏差左
 
     p_erro = &mot_err_r;
@@ -145,7 +145,7 @@ void Motor_pid()
     p_pwm = &M_right_pwm;
     p_errolast = &mot_err1_r;
     *p_erro = *p_drs-(float)mot_right;//右电机偏差
-    *p_pwm += c_data[0].M_Kp*((*p_erro)-(*p_errolast))+c_data[0].M_Ki*(*p_erro);//右电机增量式
+    *p_pwm += cdata->M_Kp*((*p_erro)-(*p_errolast))+cdata->M_Ki*(*p_erro);//右电机增量式
     *p_errolast = *p_erro;//记录上一次偏差右
     /*限幅代码*/
     if(M_left_pwm>50.0) {m_pwm = &M_left_pwm;*m_pwm = 50.0;}
