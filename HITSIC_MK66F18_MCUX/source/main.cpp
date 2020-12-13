@@ -85,6 +85,7 @@ FATFS fatfs;                                   //逻辑驱动器的工作区
 #include "image.h"
 #include"team_menu.hpp"
 
+
 cam_zf9v034_configPacket_t cameraCfg;
 dmadvp_config_t dmadvpCfg;
 dmadvp_handle_t dmadvpHandle;
@@ -94,6 +95,7 @@ inv::mpu6050_t imu_6050(imu_i2c);
 uint8_t mode_flag = 0;//状态切换标志位变量
 uint8_t *p_mflag = NULL;//状态切换指针
 uint8_t prem_flag = 0;//状态切换标志位变量2，previous标志位
+
 void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffer);//摄像头跑车函数
 void elec_runcar(void);//电磁跑车函数
 void mode_switch(void);//模式切换中断回调函数
@@ -150,7 +152,9 @@ void main(void)
     //MENU_Resume();
     /** 控制环初始化 */
     //TODO: 在这里初始化控制环
-
+    /*初始化标志位*/
+        delay_runcar = 0;//延迟发车标志位
+        banmaxian_flag = 0;//斑马线识别标志位
 
     /** 初始化结束，开启总中断 */
     HAL_ExitCritical();
@@ -162,12 +166,12 @@ void main(void)
         switch(mode_flag)//菜单模式
         {
         case 0x00: {
-
                 MENU_Resume();
-
+                delay_runcar = 0;
             while(true)
              {
                 prem_flag = mode_flag;
+                servo_init(&(c_data[0].servo_pwm));//舵机初始化
                 Motorsp_Init();
                 if(prem_flag != mode_flag) break;
               }
@@ -210,25 +214,11 @@ void main(void)
                            delete &dispBuffer;
                 }
                     break;*/
-        case 0x03://电磁跑车模式
-                {
-                    MENU_Suspend();//延迟发车
-                    DISP_SSD1306_Fill(0);
-                    SDK_DelayAtLeastUs(5000000,180*1000*1000);
-                    delay_runcar = 1;
-                while(true)
-                 {
-                    prem_flag = mode_flag;
-                    elec_runcar();
-                    DISP_SSD1306_Printf_F6x8(30,5,"%c","elecmode");
-                    if(prem_flag != mode_flag) break;
-                  }
-                delay_runcar = 0;
-                }
-                    break;
-        case 0x08://摄像头跑车模式
+        case 0x02://摄像头跑车模式
         {
+            pitMgr_t *p;//测试删除定时器中断
             MENU_Suspend();
+            DISP_SSD1306_Fill(0);
             CAM_ZF9V034_GetDefaultConfig(&cameraCfg);                                   //设置摄像头配置
             CAM_ZF9V034_CfgWrite(&cameraCfg);                                   //写入配置
             CAM_ZF9V034_GetReceiverConfig(&dmadvpCfg, &cameraCfg);    //生成对应接收器的配置数据，使用此数据初始化接受器并接收图像数据。
@@ -241,8 +231,12 @@ void main(void)
              //DMADVP_TransferSubmitEmptyBuffer(DMADVP0, &dmadvpHandle, imageBuffer1);
              DMADVP_TransferStart(DMADVP0, &dmadvpHandle);
              Motorsp_Init();//电机速度初始化
+             servo_init(&(c_data[0].servo_pwm));//舵机初始化
+             delay_runcar = 0;
+             p = pitMgr_t::insert(5000U, 1U, Delay_car, pitMgr_t::enable);//延时发车，测试删除定时器中断
              while(true)
                {
+               if(delay_runcar==1) pitMgr_t::remove(*p);//测试不再延迟发车，清除定时器中断
                prem_flag = mode_flag;
                run_car(&dmadvpHandle,dispBuffer);
                if(prem_flag != mode_flag) break;
@@ -250,10 +244,24 @@ void main(void)
                }
               delete imageBuffer0;
               delete &dispBuffer;
-
-
+              banmaxian_flag = 0;//斑马线识别标志位
 
         }break;
+        case 0x03://电磁跑车模式
+                {
+                    MENU_Suspend();
+                    DISP_SSD1306_Fill(0);
+                    SDK_DelayAtLeastUs(5000000,180*1000*1000);
+                    delay_runcar = 0;//延迟发车标志位
+                while(true)
+                 {
+                    prem_flag = mode_flag;
+                    elec_runcar();
+                    DISP_SSD1306_Printf_F6x8(30,5,"%c","elecmode");
+                    if(prem_flag != mode_flag) break;
+                  }
+                }
+                    break;
         default: break;//其他模式，待定
         }
         //TODO: 在这里添加车模保护代码
@@ -283,6 +291,7 @@ void run_car(dmadvp_handle_t *dmadvpHandle,disp_ssd1306_frameBuffer_t *dispBuffe
                      THRE();
                      image_main();
                      servo_pid();
+                     Speed_radio((c_data[0].servo_pwm-c_data[0].servo_mid));
                              dispBuffer->Clear();
                              const uint8_t imageTH = 120;
                              for (int i = 0; i < cameraCfg.imageRow; i += 2)
